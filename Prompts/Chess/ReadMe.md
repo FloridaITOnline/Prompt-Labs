@@ -1,7 +1,7 @@
 # Chess Analysis (Context Anchoring)
 
-Demonstrates context anchoring by analyzing chess games.  
-See parent README for technique overview.
+Purpose : Demonstrates context anchoring by analyzing chess games.  
+** See parent README for technique overview.
 
 ⚠️ API Key Safety  
 Your account = your responsibility. Never paste keys here.  
