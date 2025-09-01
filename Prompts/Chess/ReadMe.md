@@ -41,3 +41,18 @@ stores, or manages your credentials.
 - Chat about your games! You can export analyses and keep them for your personal portfolio.  
   In another lab, we will demonstrate how to use the output from `ChessAnalysis.md` to track 
   your own portfolio locally in your Git repository.
+
+  ---
+
+  ## License & Usage for /chess
+
+Everything contained under the `/chess` directory is released into the **public domain**.  
+This includes all ideas, terminology, concepts (such as *Context Anchoring*),  
+and any supporting notes, code, or documentation.  
+
+You are free to use, share, adapt, and build upon this material without restriction,  
+for personal, educational, or commercial purposes. No attribution is required,  
+though it is always appreciated.  
+
+In short: this is a gift — please use it freely.  
+
