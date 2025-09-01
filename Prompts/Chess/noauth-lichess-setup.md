@@ -19,6 +19,7 @@ A guide & protocol for using Lichess’s free, unauthenticated **Cloud Evaluatio
 
 ```http
 GET https://lichess.org/api/cloud-eval?fen=<URL-ENCODED-FEN>[&multiPv=N]
+```
 
 Returns engine evaluations for a single FEN: centipawn or mate score, depth, and PV lines.
 
