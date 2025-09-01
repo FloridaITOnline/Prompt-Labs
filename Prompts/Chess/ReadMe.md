@@ -56,3 +56,6 @@ though it is always appreciated.
 
 In short: this is a gift — please use it freely.  
 
+[![License: Public Domain](https://img.shields.io/badge/license-Public%20Domain-brightgreen.svg)](#license--usage-for-chess)
+
+
