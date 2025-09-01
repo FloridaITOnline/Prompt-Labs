@@ -32,15 +32,14 @@ and use PGN exports (no keys required).
    ```md
    LICHESS_USERNAME: your_username
    LICHESS_TOKEN: your_personal_token_here
-```
 
 Do not commit tokens; prefer ephemeral sessions.
 
 Copy into your context window in this order:
 
-the chosen ./setup/...md
+1. the chosen ./setup/...md
 
-./analysis/chessanalysis.md
+2. ./analysis/chessanalysis.md
 
 Run it, then paste a single-game PGN
 (or let the account setup fetch games if it supports direct export).
