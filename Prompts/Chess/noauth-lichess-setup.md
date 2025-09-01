@@ -41,15 +41,17 @@ Pass the JSON to chessanalysis.md (Step 2) for CSV/summary formatting.
 ---
 
 ## Request Samples
+```
 GET https://lichess.org/api/cloud-eval?fen=rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR%20b%20KQkq%20-%200%201
 GET https://lichess.org/api/cloud-eval?fen=<FEN>&multiPv=3
-
+```
 
 multiPv (optional) asks for top-N lines. Parse defensively if the API returns more/less lines than requested.
 
 ---
 
 ## Example Response (typical)
+```
 {
   "fen": "<same fen>",
   "depth": 20,
@@ -58,7 +60,7 @@ multiPv (optional) asks for top-N lines. Parse defensively if the API returns mo
     { "moves": ["d2d4","d7d5","..."], "cp": 18 }
   ]
 }
-
+```
 
 A PV includes either "cp" (centipawns, side-to-move perspective) or "mate" (mate in N).
 
@@ -76,6 +78,7 @@ White to move → whitePOV = cp (or mate as +N)
 Black to move → whitePOV = -cp (or mate as -N)
 
 ## Recommended Step-1 JSON Row
+```
 {
   "ply": 12,
   "fullmove": 6,
@@ -87,7 +90,7 @@ Black to move → whitePOV = -cp (or mate as -N)
   "pvUci": "c7c5 Nc3 Nc6 Bb5 ...",
   "pvSan": "… c5 Nc3 Nc6 Bb5"
 }
-
+```
 
 Keep whitePOV as integer centipawns or signed mate per the rule above.
 
@@ -149,7 +152,22 @@ MultiPV quirks → parse defensively; if you asked for 3 and got 5, keep the fir
 ---
 
 ## References
+```
+Lichess API docs https://lichess.org/api 
 
-Lichess API docs
+Cloud Eval endpoint (official docs):
+https://lichess.org/api#operation/apiCloudEval 
+lichess.org
 
-Cloud Eval usage notes & forum threads (MultiPV behavior, FEN/EP correctness)
+
+MultiPV behavior (returns more lines than requested):
+https://lichess.org/forum/lichess-feedback/cloud-eval-api-returns-more-variations-than-required 
+lichess.org
+
+FEN / en passant correctness discussion (EP field causing failures):
+https://lichess.org/forum/lichess-feedback/wrong-fen-en-passant-square-ignored 
+lichess.org
+
+General API tips & rate-limit etiquette:
+https://lichess.org/page/api-tips
+```
