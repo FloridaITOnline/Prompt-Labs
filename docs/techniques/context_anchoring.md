@@ -1,5 +1,8 @@
 # Technique: Context Anchoring
 
+> Note: This definition of *Context Anchoring* is released into the public domain.  
+> It is intended as a shared concept, free for anyone to use, adapt, and build upon.  
+
 ## Definition
 **Context Anchoring** is a prompting technique for maintaining consistency in multi-step AI workflows.  
 It involves reusing a previously validated output as a **stable anchor** in subsequent prompts, ensuring the  
