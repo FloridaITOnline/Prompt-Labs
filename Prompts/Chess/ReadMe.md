@@ -35,6 +35,18 @@ stores, or manages your credentials.
 
 ---
 
+⚙️ Capability & Fetch Modes (RAG-friendly)
+
+Some assistants can’t call HTTP or read local files. This project supports two modes:
+
+Paste-Mode (default, no keys): Export your games (PGN/JSON) from Lichess / Chess.com / Chessis and paste them below the prompt.
+
+Direct-Fetch Mode (optional): If your assistant supports web calls and you provide an Account Card with consent, it may fetch via the platforms’ published endpoints.
+
+RAG required (for continuity): After normalization, save the emitted CSV/JSONL to your own storage (e.g., Git repo). In later sessions/tools, re-anchor by pasting those rows back into context. That’s your portable “memory” across Copilot, Gemini, ChatGPT, etc.
+
+---
+
 ## Next Steps
 - [General Account Setup Guide](../account-setup.md)  
 - [Example Prompts](../ChessAnalysis.md)  
