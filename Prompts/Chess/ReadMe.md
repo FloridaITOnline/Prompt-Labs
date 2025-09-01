@@ -10,12 +10,41 @@ and use PGN exports (no keys required).
 
 ---
 
-## Quickstart (No API Key Needed)
-1. Export games (Lichess / Chess.com / Chessis)  
-2. Map them into a context block  
-3. Run the analysis prompt  
+## Quickstart (Auto-Fetch; No Auth)
 
-*(If you later want to connect accounts directly, see **Account Connections** below.)*
+1. Open **`./quickstart/quickstart.md`** and copy its contents into your assistant’s context window.  
+2. Paste your **single-game PGN** when prompted.
+
+> Uses the free Lichess **Cloud Eval** endpoint (no tokens/accounts). Subject to rate limits per IP.  
+> Connecting a Lichess account does **not** raise Cloud Eval limits, but it can enable faster authenticated game exports and other features—see **Account Connections**.
+
+---
+
+## Using Other Setups
+
+1. **Pick a setup** from `./setup/`:
+   - `noauth-lichess-setup.md` — *no login*, paste PGN, Cloud Eval only.
+   - `lichess-account-setup.md` — requires **LICHESS_USERNAME** + **LICHESS_TOKEN**; lets you fetch your games and may allow higher export throughput.
+   - `chessdotcom-setup.md` — requires **CHESSCOM_USERNAME** (public data; no token).
+   - `chessis-setup.md` — export PGN from the app; no token.
+
+2. **Edit placeholders** (example):
+   ```md
+   LICHESS_USERNAME: your_username
+   LICHESS_TOKEN: your_personal_token_here
+```
+Do not commit tokens; prefer ephemeral sessions.
+
+Copy into your context window in this order:
+
+the chosen ./setup/...md
+
+./analysis/chessanalysis.md
+
+Run it, then paste a single-game PGN
+(or let the account setup fetch games if it supports direct export).
+
+>Tip: If something fails (fetch/rate limits), fall back to paste-mode by exporting PGNs and re-running with noauth-lichess-setup.md.
 
 ---
 
