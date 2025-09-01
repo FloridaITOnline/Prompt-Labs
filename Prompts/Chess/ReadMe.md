@@ -33,6 +33,7 @@ and use PGN exports (no keys required).
    LICHESS_USERNAME: your_username
    LICHESS_TOKEN: your_personal_token_here
 ```
+
 Do not commit tokens; prefer ephemeral sessions.
 
 Copy into your context window in this order:
