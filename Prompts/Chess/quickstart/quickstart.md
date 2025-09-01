@@ -93,3 +93,22 @@ If both phases succeeded, say: “Done.”
 ```
 
 If any step failed (fetch, parse, network), clearly state which step and what you need (e.g., “Paste Step-1 doc raw text” or “Provide a valid single-game PGN”).
+
+### Optional Enrichment — ACPL & Error Counts (No-Auth)
+
+Add this after Step 1 to compute **ACPL** and count **Inaccuracies/Mistakes/Blunders** using only Cloud Eval.
+
+**How it works (per ply, mover’s POV):**
+1. Evaluate the position **before** each move (`cp_before`, side-to-move = mover).
+2. For the **after** value, reuse the **next ply’s `cp_before`** (it’s for the opponent) and **negate** it:  
+   `cp_after_for_mover = - cp_before_next_ply`.  
+   *(If there is no next ply because the game ended, skip that last move for ACPL.)*
+3. **Loss** for the move = `max(0, cp_before - cp_after_for_mover)`.
+4. **ACPL** (per color) = average of **Loss** over that color’s moves.
+5. Classify by Loss (centipawns):  
+   - Inaccuracy ≥ **50**  
+   - Mistake ≥ **100**  
+   - Blunder ≥ **200**
+
+**Output block (hand to Step 2 / `chessanalysis.md`):**
+
