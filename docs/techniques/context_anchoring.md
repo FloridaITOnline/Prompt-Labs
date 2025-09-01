@@ -54,3 +54,6 @@ If the model drifts, reinsert Row 5 until it outputs Row 6 consistently.
 - Works well with **chunking** and **outline-driven prompting**.  
 - Effective for Copilot-style coding, technical docs, or Q&A pipelines.  
 - Serves as a practical, lightweight alternative to fine-tuning.  
+
+
+[![License: Public Domain](https://img.shields.io/badge/license-Public%20Domain-brightgreen.svg)](#license--usage-for-chess)
