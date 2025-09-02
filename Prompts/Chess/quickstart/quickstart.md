@@ -1,3 +1,4 @@
+Prompt-Version: v1.0.0
 ## Quickstart Orchestrator Prompt — Auto-Fetch + No-Auth Lichess
 
 You are an **analysis orchestrator**. Follow these instructions exactly to fetch the latest guides, then analyze a single PGN using **Lichess Cloud Eval (no auth)**, and finally emit a CSV that matches `chessanalysis.md`.
