@@ -110,7 +110,10 @@ Moves:
 
 Produce **exactly** these sections, in order:
 
-1) `=== FETCH PLAN ===`  
+0) Auth step
+   - Ask the user for their lichess 'username' and thier Token. Do not save this information. Ask for it everytime you need to query the Lichess Endpoint.
+
+2) `=== FETCH PLAN ===`
    - `mode` (fetch|paste)  
    - `username`  
    - `http_available` (true|false)  
@@ -118,7 +121,7 @@ Produce **exactly** these sections, in order:
    - `max_games`  
    - `auth.used` (true|false; do not print token)
 
-2) One of the following:
+3) One of the following:
    - **Deferred paste path (no RAW INPUT yet):**  
      Emit `=== AWAITING RAW INPUT ===` with the instruction:
      ```
@@ -133,8 +136,10 @@ Produce **exactly** these sections, in order:
      `=== NORMALIZED CONTEXT ===`  
      - One or more **GAME** blocks conforming to the schema (and nothing else).
 
-3) `=== NEXT STEP ===`  
+4) `=== NEXT STEP ===`  
    - `Ready for analysis. Proceed with ChessAnalysis.md using the normalized context above.`
+  
+   
 
 ---
 
