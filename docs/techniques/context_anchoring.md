@@ -96,5 +96,51 @@ Every anchor benefits from a lightweight companion note:
 - Anchors should be versioned and regression-tested like code.  
 
 ---
+## References
+---
+
+### Software Testing & Test Theory
+- **Equivalence Partitioning.** *Wikipedia.*  
+  <https://en.wikipedia.org/wiki/Equivalence_partitioning>
+
+- **Boundary-Value Analysis.** *Wikipedia.*  
+  <https://en.wikipedia.org/wiki/Boundary-value_analysis>
+
+- **Basic Unit Testing Theory: Equivalence Partitioning & Boundary Cases.** Rochester Institute of Technology (RIT).  
+  <https://www.se.rit.edu/~swen-610/topics/Basic%20Unit%20Testing%20Theory.pdf>
+
+---
+
+### Prompt Engineering & Prompt-Based Learning
+- Reynolds, L. & McDonell, K. (2021). *Prompt Programming for Large Language Models: Beyond Few-Shot.* arXiv.  
+  <https://arxiv.org/abs/2102.07350>
+
+- Liu, P. et al. (2021). *Pre-train, Prompt, and Predict: A Systematic Survey of Prompting Methods in NLP.* arXiv.  
+  <https://arxiv.org/abs/2107.13586>
+
+- Zhou, X. et al. (2022). *Large Language Models are Human-Level Prompt Engineers.* arXiv.  
+  <https://arxiv.org/abs/2211.01910>
+
+- Haug, J. et al. (2023). *An Empirical Evaluation of Prompting Strategies for Large Language Models in Clinical NLP.* arXiv.  
+  <https://arxiv.org/abs/2309.08008>
+
+---
+
+### Prompt Effectiveness & Few-Shot Learning
+- Haug, J. et al. (2023). *Effectiveness of Prompting Strategies for Large Language Models.* PubMed Central (PMC).  
+  <https://pmc.ncbi.nlm.nih.gov/articles/PMC11036183/>
+
+- **Few-Shot Prompting.** IBM Think.  
+  <https://www.ibm.com/think/topics/few-shot-prompting>
+
+- **Prompt Engineering Techniques Survey.** Prompting Guide.  
+  <https://www.promptingguide.ai/papers>
+
+---
+
+### Foundational Concepts
+- **Prompt Engineering.** *Wikipedia.*  
+  <https://en.wikipedia.org/wiki/Prompt_engineering>
+
 
 [![License: Public Domain](https://img.shields.io/badge/license-Public%20Domain-brightgreen.svg)](#license--usage-for-chess)
