@@ -34,10 +34,7 @@ This repo is modular. You can choose from setups under `./setup/` depending on y
 Some assistants can’t call HTTP or read local files. This project supports two approaches:
 
 - **Paste-Mode (default, no keys):**  
-  Export your games as PGN from any platform and paste them below the prompt.  
-
-- **Direct-Fetch Mode (optional):**  
-  If your assistant supports web calls and you consent, it may fetch game data using published endpoints or local file reads.  
+  Export your games as PGN from any platform and paste them below the prompt.    
 
 **RAG for continuity:**  
 After analysis, save the emitted CSV/JSONL to your own storage (e.g., Git repo). In later sessions or tools, re-anchor by pasting those rows back into context. That becomes your portable “memory” across ChatGPT, Gemini, Copilot, etc.  
