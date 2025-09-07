@@ -67,3 +67,37 @@ Follow the Step-1 rules in `chessanalysis.md`.
 5. Emit the Step-1 JSON rows using the exact schema — include all keys, using `null` when data is unavailable.  
 
 **Output Phase A (and nothing else):**
+===STEP1-JSON===
+```
+[ { ...row1... }, { ...row2... }, ... ]
+```
+
+---
+
+### 4) Step 2 — CSV Emission
+
+Once Step-1 JSON is generated, proceed with Step-2:
+
+- Consume PGN tags and any enrichment data.  
+- Apply the **Field Completion Policy** from `chessanalysis.md`: no guessing, blank for unknown.  
+- Emit exactly one CSV block matching the header order in `chessanalysis.md`. Do not include engine or FEN details.  
+
+**Output Phase B (and nothing else):**
+===CSV===
+```
+<GameId,Platform,Date,MyColor,Opponent,OppElo,Result,ECO,Opening,TimeControl,Blunders,Mistakes,Inaccuracies,ACPL,Accuracy,SystemTag,MovesShort>
+<row(s)>
+```
+
+---
+
+### 5) Post-run
+
+- If both phases succeed, say: **“Done.”**  
+- On failure (fetch, parse, evaluation), clearly state the step and what’s needed (e.g., “Paste Step-1 doc raw text” or “Provide a valid PGN”).  
+
+---
+
+### Optional Enrichment
+
+If evaluation scores are present from Step 1, compute ACPL and classify inaccuracies/mistakes/blunders using thresholds in `chessanalysis.md`. Leave blank if scores are unavailable.  
