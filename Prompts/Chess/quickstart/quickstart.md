@@ -152,83 +152,42 @@ After both guides are successfully loaded:
 
 
 ### 3) When I paste a PGN — Step 1 execution
-Follow the Step-1 doc you fetched:
+Follow the Step-1 rules in `chessanalysis.md`.  
+**Do not begin Step 1 until all gates have been passed.**
 
-1. **Parse PGN** and reconstruct the position **after each full move** (you may analyze every ply if needed; prefer full moves to reduce calls).
-2. For each position, build a valid **standard chess FEN** (correct castling, en-passant, counters).
-3. **Call Cloud Eval** sequentially for each FEN:  
-   `GET https://lichess.org/api/cloud-eval?fen=<URL-ENCODED-FEN>[&multiPv=1]`
-4. **Pacing & Backoff:** insert ~**120–200 ms** delay (with small jitter) between calls. On **HTTP 429**, wait ~**60s** and resume. Retry network/5xx up to **2×** with backoff.
-5. **Normalize scores to White POV** (per Step-1 doc):  
-   - If side-to-move is **White** → `whitePOV = cp` (or mate `+N`)  
-   - If side-to-move is **Black** → `whitePOV = -cp` (or mate `-N`)
-6. **Produce Step-1 JSON** rows with this exact schema (keys present for every row):
-   ```json
-   {
-     "ply": <int>,
-     "fullmove": <int>,
-     "moveSAN": "<string>",
-     "fen": "<string>",
-     "sideToMove": "w|b",
-     "depth": <int|null>,
-     "score": {
-       "type": "cp|mate|null",
-       "raw": <int|null>,
-       "whitePOV": <int|null>
-     },
-     "pvUci": "<string|null>",
-     "pvSan": "<string|null>"
-   }
-```
-If a call fails for a position, still emit the row with depth:null and score:null.
+1. Parse the PGN and reconstruct the position after each full move (analyzing each ply if required).  
+2. For each position, build a valid FEN (including castling rights, en-passant, counters).  
+3. Evaluate each position using the method defined in `chessanalysis.md` (engine or service).  
+4. Normalize scores to White POV as specified in `chessanalysis.md`.  
+5. Produce Step-1 JSON rows using the required schema (all keys present, nulls where data is unavailable).  
 
-Output Phase A (and nothing else):
-
-Copy code
+**Output Phase A (and nothing else):**
 ===STEP1-JSON===
-```json
 [ { ...row1... }, { ...row2... }, ... ]
-```
 
-4) Step 2 — CSV emission (use the fetched chessanalysis.md)
-Consume the PGN’s tags and any enrichment available in-thread.
 
-Follow the Field Completion Policy strictly (no guessing; only allowed deterministic derivations).
+---
 
-Emit exactly one CSV block with the exact header order defined in chessanalysis.md.
+### 4) Step 2 — CSV emission
+After Step 1 JSON is complete, consume the PGN’s tags and any enrichment data.  
+Follow the **Field Completion Policy** from `chessanalysis.md` (strict no guessing, blanks if unknown).  
 
-Leave ACPL/Accuracy/Blunders/Mistakes/Inaccuracies blank unless explicitly provided by source/enrichment (Cloud Eval alone does not provide them).
+Emit one CSV block with the exact header order defined in `chessanalysis.md`.  
+Do not include FENs or engine details in the CSV.  
 
-Do not include FENs or engine details in the CSV.
-
-Output Phase B (and nothing else):
-
-Copy code
+**Output Phase B (and nothing else):**
 ===CSV===
-```
 <GameId,Platform,Date,MyColor,Opponent,OppElo,Result,ECO,Opening,TimeControl,Blunders,Mistakes,Inaccuracies,ACPL,Accuracy,SystemTag,MovesShort>
 <row(s)>
-5) Post-run
-If both phases succeeded, say: “Done.”
-```
 
-If any step failed (fetch, parse, network), clearly state which step and what you need (e.g., “Paste Step-1 doc raw text” or “Provide a valid single-game PGN”).
+---
 
-### Optional Enrichment — ACPL & Error Counts (No-Auth)
+### 5) Post-run
+- If both phases succeed, say: **“Done.”**  
+- If any step fails (fetch, parse, eval), state the failing step and what is needed (e.g., “Paste Step-1 doc raw text” or “Provide a valid PGN”).  
 
-Add this after Step 1 to compute **ACPL** and count **Inaccuracies/Mistakes/Blunders** using only Cloud Eval.
+---
 
-**How it works (per ply, mover’s POV):**
-1. Evaluate the position **before** each move (`cp_before`, side-to-move = mover).
-2. For the **after** value, reuse the **next ply’s `cp_before`** (it’s for the opponent) and **negate** it:  
-   `cp_after_for_mover = - cp_before_next_ply`.  
-   *(If there is no next ply because the game ended, skip that last move for ACPL.)*
-3. **Loss** for the move = `max(0, cp_before - cp_after_for_mover)`.
-4. **ACPL** (per color) = average of **Loss** over that color’s moves.
-5. Classify by Loss (centipawns):  
-   - Inaccuracy ≥ **50**  
-   - Mistake ≥ **100**  
-   - Blunder ≥ **200**
-
-**Output block (hand to Step 2 / `chessanalysis.md`):**
-
+### Optional Enrichment
+If evaluation scores are available from Step 1, compute ACPL and classify inaccuracies/mistakes/blunders using thresholds defined in `chessanalysis.md`.  
+If evaluation scores are not available, leave these fields blank.  
