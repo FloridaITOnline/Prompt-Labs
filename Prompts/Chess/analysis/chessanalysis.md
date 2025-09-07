@@ -13,9 +13,9 @@ It also defines the **Gate System** (nine core gates, expandable) that must be p
 GameId,Platform,Date,MyColor,Opponent,OppElo,Result,ECO,Opening,TimeControl,Blunders,Mistakes,Inaccuracies,ACPL,Accuracy,SystemTag,MovesShort
 
 **Completion Policy:**
-- Fill only when present or deterministically derivable from PGN.  
+- Fill only when present or deterministically derivable from PGN tags.  
 - No guessing. Unknown fields → blank.  
-- Quote fields with commas, escape `"` by doubling.  
+- Quote fields with commas; escape `"` by doubling.  
 - Emit CSV only (no prose).  
 - Determinism: same PGN → identical output.  
 
@@ -35,9 +35,23 @@ Each gate is defined in a separate file `...\gateXX.md` (two-digit numbering).
 
 ---
 
+### 📚 References
+- **Context Anchoring** — Full explanation of the methodology:  
+  https://raw.githubusercontent.com/FloridaITOnline/Prompt-Labs/refs/heads/main/docs/techniques/context_anchoring.md  
+
+- **Software Testing & Test Theory:**  
+  - Equivalence Partitioning (Wikipedia)  
+    https://en.wikipedia.org/wiki/Equivalence_partitioning  
+  - Boundary-Value Analysis (Wikipedia)  
+    https://en.wikipedia.org/wiki/Boundary-value_analysis  
+  - Basic Unit Testing Theory: Equivalence Partitioning & Boundary Cases (Rochester Institute of Technology, RIT)  
+    https://www.se.rit.edu/~swen-610/topics/Basic%20Unit%20Testing%20Theory.pdf  
+
+---
+
 ### Gate 00 — Guides Loaded & Checks Enabled
 **Teach:** See `...\gate00.md`  
-**Learn:** What constraints govern this analysis (e.g., no guessing, fill policy)?  
+**Learn:** What constraints govern this analysis (e.g., no guessing, fill policy, delimiter rules)?  
 **Answer:** [to be filled in after passing]  
 
 ---
@@ -100,7 +114,7 @@ Each gate is defined in a separate file `...\gateXX.md` (two-digit numbering).
 
 ### Gate 09 — CSV Contract Conformance
 **Teach:** See `...\gate09.md`  
-**Learn:** What is the exact CSV header order and completion policy?  
+**Learn:** What must the final CSV row look like?  
 **Answer:** [to be filled in after passing]  
 
 ---
