@@ -1,66 +1,121 @@
-## Portfolio CSV — Output Contract (strict)
+# Chess Analysis Specification (chessanalysis.md)
 
-> Emit **only** one CSV block with a single header line and one row per game.
-> Leave unknowns blank; do not add commentary or extra lines.
+**Version:** v1.1.0  
+**Purpose:** This document defines the authoritative rules and readiness checks for analyzing a single PGN into a deterministic CSV row.  
+It also defines the **Gate System** (nine core gates, expandable) that must be passed before analysis may begin.
 
-**Header (exactly this order):**
+---
+
+## Part A — Core CSV Contract
+
+**CSV Header (fixed order):**
+
 GameId,Platform,Date,MyColor,Opponent,OppElo,Result,ECO,Opening,TimeControl,Blunders,Mistakes,Inaccuracies,ACPL,Accuracy,SystemTag,MovesShort
 
-**Field rules**
-- GameId: stable id (e.g., lichess-abc123); from normalized context.
-- Platform: `lichess`
-- Date: `YYYY.MM.DD`
-- MyColor: `White` | `Black`
-- Opponent: username (or blank)
-- OppElo: integer (or blank)
-- Result: `1-0` | `0-1` | `1/2-1/2` | `*`
-- ECO: code like `C20` (or blank)
-- Opening: short name (or blank)
-- TimeControl: e.g., `180+2`
-- Blunders/Mistakes/Inaccuracies: integers (blank if unknown)
-- ACPL: float (blank if unknown) — **use 1 decimal place**
-- Accuracy: number **0–100** (no `%`; blank if unknown)
-- SystemTag: optional user tag (e.g., your custom system name)
-- MovesShort: very short SAN snippet (e.g., first 6–10 plies), no comments
+**Completion Policy:**
+- Fill only when present or deterministically derivable from PGN.  
+- No guessing. Unknown fields → blank.  
+- Quote fields with commas, escape `"` by doubling.  
+- Emit CSV only (no prose).  
+- Determinism: same PGN → identical output.  
 
-**Example (header + 2 rows)**
-GameId,Platform,Date,MyColor,Opponent,OppElo,Result,ECO,Opening,TimeControl,Blunders,Mistakes,Inaccuracies,ACPL,Accuracy,SystemTag,MovesShort
-lichess-abcd1234,lichess,2025.08.31,White,opponent_1,1535,1-0,C20,"King's Pawn Game","180+2",,0,1,12.3,98.1,"My-English","1. e4 e5 2. Bc4 Nc6 3. Qh5..."
-lichess-efgh5678,lichess,2025.08.30,Black,opponent_2,1540,0-1,B00,"Uncommon Opening","180+2",1,1,,32.5,,,"1. f3 e5 2. g4 Qh4#"
+---
 
-**Constraints**
-- Exactly one CSV block. No prose before/after.
-- Quote fields that contain commas (e.g., Opening names).
-- **If a field contains a double quote, escape it by doubling it** (CSV rule), e.g., `He said ""wow""`.
-- Do not include engine details or FENs here—keep it compact for tracking.
-- Use data only from the **normalized context** (and any enrichment available in-thread).
+## Part B — Readiness Gates
 
-## Field Completion Policy (No Guessing)
+Before PGN analysis begins, the system must pass a sequence of gates.  
+Each gate is defined in a separate file `...\gateXX.md` (two-digit numbering).  
 
-Always emit the full CSV header. For each game, fill values **only** if they are
-(a) explicitly present in the normalized context or enrichment, or
-(b) deterministically derivable by simple rules below.
-Otherwise leave the cell **blank**. Do not infer from general knowledge.
+- **Teach:** Excerpt from the corresponding gate doc (concept, rules, examples).  
+- **Learn:** A validation question that must be answered correctly.  
+- **Answer:** The expected correct answer, recorded here once the gate is passed.  
 
-### Allowed deterministic derivations
-- GameId: use from normalized block; if missing, use fallback `pgn-<YYYYMMDD>-<index>`.
-- Platform: literal `lichess` (or source from normalized block if multi-platform).
-- Date: from PGN/JSON tag `Date` (normalized form `YYYY.MM.DD`).
-- MyColor: **case-insensitive** compare: if `username` equals `White` → `White`; if equals `Black` → `Black`; else blank.
-- Opponent: the *other* player’s username if `MyColor` is known; else blank.
-- OppElo: `WhiteElo` or `BlackElo` corresponding to Opponent (integer only).
-- Result: from tag (`1-0`, `0-1`, `1/2-1/2`, `*`).
-- ECO / Opening: use **only** if present in normalized block (or enrichment explicitly provided them). Do **not** guess from move text.
-- TimeControl: from tag (e.g., `180+2`).
-- Blunders / Mistakes / Inaccuracies / ACPL / Accuracy: fill **only** if provided by the source export or the enrichment step; else blank.
-- SystemTag: user-provided tag if present; else blank.
-- MovesShort: first 6–10 plies from `Moves` (strip comments/NAGs/variations).
+> Progress only when a gate passes. If a gate fails, reflect on the error, retry until correct.  
+> When all gates are passed, readiness is confirmed and PGN analysis may begin.
 
-### Never infer
-- Do not derive ECO/Opening by “recognizing” moves unless an explicit opening map is provided in-context.
-- Do not synthesize ratings, accuracy, ACPL, or error counts unless present in export/enrichment.
-- Do not reformat dates from outside the provided tags; if malformed, leave blank.
+---
 
-### Validation
-- If a value is not present or computable by the rules above, leave it **blank**.
-- Do not add commentary in the CSV block.
+### Gate 00 — Guides Loaded & Checks Enabled
+**Teach:** See `...\gate00.md`  
+**Learn:** What constraints govern this analysis (e.g., no guessing, fill policy)?  
+**Answer:** [to be filled in after passing]  
+
+---
+
+### Gate 01 — PGN Integrity & Tag Extraction
+**Teach:** See `...\gate01.md`  
+**Learn:** Which PGN tags are required, which are optional, and how should missing tags be handled?  
+**Answer:** [to be filled in after passing]  
+
+---
+
+### Gate 02 — Move Legality & FEN Fidelity
+**Teach:** See `...\gate02.md`  
+**Learn:** What rules ensure moves are legal when reconstructing FEN (castling, en passant, half/fullmove counters)?  
+**Answer:** [to be filled in after passing]  
+
+---
+
+### Gate 03 — Score Normalization (White-POV)
+**Teach:** See `...\gate03.md`  
+**Learn:** How are centipawn and mate scores normalized to White’s perspective?  
+**Answer:** [to be filled in after passing]  
+
+---
+
+### Gate 04 — Opening Recognition
+**Teach:** See `...\gate04.md`  
+**Learn:** What is the procedure for assigning ECO/Opening values, and when must they be left blank?  
+**Answer:** [to be filled in after passing]  
+
+---
+
+### Gate 05 — ACPL & Error Counts
+**Teach:** See `...\gate05.md`  
+**Learn:** How do you compute ACPL and classify inaccuracies, mistakes, and blunders?  
+**Answer:** [to be filled in after passing]  
+
+---
+
+### Gate 06 — Blunder Mantras & Justification
+**Teach:** See `...\gate06.md`  
+**Learn:** What checklist should be applied to identify and justify blunders?  
+**Answer:** [to be filled in after passing]  
+
+---
+
+### Gate 07 — Accuracy Metric (Fallback)
+**Teach:** See `...\gate07.md`  
+**Learn:** How is FLITO-Accuracy computed from ACPL, and when should it be used?  
+**Answer:** [to be filled in after passing]  
+
+---
+
+### Gate 08 — TimeControl & Metadata Parsing
+**Teach:** See `...\gate08.md`  
+**Learn:** How should common TimeControl formats be normalized?  
+**Answer:** [to be filled in after passing]  
+
+---
+
+### Gate 09 — CSV Contract Conformance
+**Teach:** See `...\gate09.md`  
+**Learn:** What is the exact CSV header order and completion policy?  
+**Answer:** [to be filled in after passing]  
+
+---
+
+## Part C — Optional Extensions
+
+- **Additional Gates:** May be added beyond Gate 09 using `...\gate10.md`, `...\gate11.md`, etc.  
+- **Optional Modules:** Tactical Audit or other enrichment rules may be defined separately, but must follow the same Teach/Learn/Answer pattern.  
+
+---
+
+## I/O Protocol
+
+- **Input:** A complete PGN (headers + moves), plus optional enrichment flags.  
+- **Output:**  
+  1. Anchored CSV row (Part A)  
+  2. Optional extensions (e.g., Tactical Audit)  
+- **No prose** — only structured output blocks.  
