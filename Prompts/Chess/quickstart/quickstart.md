@@ -155,7 +155,6 @@ Only once all gates have been passed with correct answers should you confirm rea
 ### 3) When I paste a PGN — Step 1 Execution
 
 Follow the Step-1 rules in `chessanalysis.md`.  
-**Do not begin Step 1 until all gates have been passed.**
 
 1. Parse the PGN and reconstruct positions after each full move (or every ply if required).
 2. Build a valid FEN for each position (including castling rights, en-passant, move counters).
