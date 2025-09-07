@@ -101,3 +101,30 @@ Once Step-1 JSON is generated, proceed with Step-2:
 ### Optional Enrichment
 
 If evaluation scores are present from Step 1, compute ACPL and classify inaccuracies/mistakes/blunders using thresholds in `chessanalysis.md`. Leave blank if scores are unavailable.  
+
+---
+
+## 0a) Compliance Preamble (must pass before Gate 0)
+
+To ensure adherence to the `chessanalysis.md` contract, the following checks **must be completed and passed** before entering Gate 0.
+
+1. **Header Verification**  
+   - Echo the **CSV header string from `chessanalysis.md`** exactly, byte-for-byte.  
+   - Abort if any column name, order, or delimiter differs.  
+
+2. **Gate Report**  
+   - Print a readiness report for all Gates (00–09).  
+   - Halt analysis if any gate has not yet been passed.  
+
+3. **Step-1 Guarantee**  
+   - Never skip Step-1 JSON emission.  
+   - If evaluations are unavailable, set numeric fields to `null` rather than simulating values.  
+
+4. **Structured Output Only**  
+   - During Phase A (JSON) and Phase B (CSV), output **only** the delimited block.  
+   - Do not include prose, commentary, or summaries inside those blocks.  
+
+5. **Determinism**  
+   - The same PGN must always yield the same Step-1 JSON and CSV.  
+   - No placeholders (e.g., “simulated evals”) are allowed.  
+
