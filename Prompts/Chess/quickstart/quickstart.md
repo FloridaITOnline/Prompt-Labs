@@ -60,6 +60,13 @@ Only once all gates have been passed with correct answers should you confirm rea
 Follow the Step-1 rules in `chessanalysis.md`.  
 **Do not begin Step 1 until all gates have been passed.**
 
+**Important:**  
+- Do **not** narrate, explain, or describe what you are doing.  
+- Do **not** emit emojis, commentary, or prose.  
+- Emit only the required delimiter block and its contents.  
+- Any output outside the delimiter block is a contract violation.  
+
+Steps:
 1. Parse the PGN and reconstruct positions after each full move (or every ply if required).  
 2. Build a valid FEN for each position (including castling rights, en-passant, move counters).  
 3. Evaluate each position using the evaluation method specified in `chessanalysis.md`.  
@@ -76,8 +83,14 @@ Follow the Step-1 rules in `chessanalysis.md`.
 
 ### 4) Step 2 — CSV Emission
 
-Once Step-1 JSON is generated, proceed with Step-2:
+Once Step-1 JSON is generated, proceed with Step-2.  
 
+**Important:**  
+- Do **not** narrate or describe what you are about to do.  
+- Emit only the CSV block exactly as defined.  
+- Any prose or commentary outside the delimiter block is a contract violation.  
+
+Steps:
 - Consume PGN tags and any enrichment data.  
 - Apply the **Field Completion Policy** from `chessanalysis.md`: no guessing, blank for unknown.  
 - Emit exactly one CSV block matching the header order in `chessanalysis.md`. Do not include engine or FEN details.  
@@ -88,8 +101,6 @@ Once Step-1 JSON is generated, proceed with Step-2:
 <GameId,Platform,Date,MyColor,Opponent,OppElo,Result,ECO,Opening,TimeControl,Blunders,Mistakes,Inaccuracies,ACPL,Accuracy,SystemTag,MovesShort>
 <row(s)>
 ```
-
----
 
 ### 5) Post-run
 
