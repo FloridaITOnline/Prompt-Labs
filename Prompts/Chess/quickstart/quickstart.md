@@ -23,18 +23,20 @@ If either fetch fails, stop and ask me to paste the missing document’s raw tex
 
 ---
 
-### 2) Confirm readiness (short)
-After both guides are successfully loaded:
-
-1. Summarize in **2–4 bullets** what each step requires:  
-   - **Step 1** → PGN to FEN conversion, evaluation method, White-POV normalization, pacing/backoff rules.  
-   - **Step 2** → CSV header and field requirements, strict no-guessing policy, fill-policy rules.  
-
 2. Enter an **iterative check loop**:  
-   - I will provide test instructions or sample games.  
-   - For each gate, you must study the material, answer the question, and verify correctness.  
-   - If your answer is wrong, you will be corrected and must retry until it is right.  
-   - If your answer is correct, proceed to the next gate.  
+   - I will provide test instructions or sample games via the chessanalysis.md.
+   - For each gate, study the material, answer the question, and compare against the expected result.  
+   - If your answer is **correct**, proceed to the next gate.  
+   - If your answer is **incorrect**, do not stop. Instead:  
+     1. Explicitly ask yourself: *“Why did my answer not match the expected result?”*  
+     2. Generate a short reflection identifying the cause of the error (e.g., missed rule, misapplied formula, parsing mistake).  
+     3. Adjust your reasoning or method based on that reflection.  
+     4. Retry the test with the adjusted approach.  
+   - Repeat this process until your answer matches the expected result.  
+
+Only once all gates have been passed with correct answers should you confirm readiness by saying:  
+**“Okay, I am ready. Please paste a single-game PGN.”**
+
 
 3. When **all gates are passed**, confirm readiness by saying:  
    **“Okay, I am ready. Please paste a single-game PGN.”**
@@ -150,44 +152,45 @@ After both guides are successfully loaded:
 **Pass:** Produce one valid CSV row for a sample PGN; the header must match byte-for-byte; all unknown fields left blank.  
 
 
+### 3) When I paste a PGN — Step 1 Execution
 
-### 3) When I paste a PGN — Step 1 execution
 Follow the Step-1 rules in `chessanalysis.md`.  
 **Do not begin Step 1 until all gates have been passed.**
 
-1. Parse the PGN and reconstruct the position after each full move (analyzing each ply if required).  
-2. For each position, build a valid FEN (including castling rights, en-passant, counters).  
-3. Evaluate each position using the method defined in `chessanalysis.md` (engine or service).  
-4. Normalize scores to White POV as specified in `chessanalysis.md`.  
-5. Produce Step-1 JSON rows using the required schema (all keys present, nulls where data is unavailable).  
+1. Parse the PGN and reconstruct positions after each full move (or every ply if required).
+2. Build a valid FEN for each position (including castling rights, en-passant, move counters).
+3. Evaluate each position using the evaluation method specified in `chessanalysis.md`.
+4. Normalize scores to White’s perspective as described in `chessanalysis.md`.
+5. Emit the Step-1 JSON rows using the exact schema—include all keys, using `null` when data is unavailable.
 
 **Output Phase A (and nothing else):**
 ===STEP1-JSON===
+```
 [ { ...row1... }, { ...row2... }, ... ]
+```
+### 4) Step 2 — CSV Emission
 
+Once Step-1 JSON is generated, proceed with Step-2:
 
----
-
-### 4) Step 2 — CSV emission
-After Step 1 JSON is complete, consume the PGN’s tags and any enrichment data.  
-Follow the **Field Completion Policy** from `chessanalysis.md` (strict no guessing, blanks if unknown).  
-
-Emit one CSV block with the exact header order defined in `chessanalysis.md`.  
-Do not include FENs or engine details in the CSV.  
+- Consume PGN tags and any enrichment data.
+- Apply the **Field Completion Policy** from `chessanalysis.md`: no guessing, blank for unknown.
+- Emit exactly one CSV block matching the header order in `chessanalysis.md`. Do not include engine or FEN details.
 
 **Output Phase B (and nothing else):**
 ===CSV===
+```
 <GameId,Platform,Date,MyColor,Opponent,OppElo,Result,ECO,Opening,TimeControl,Blunders,Mistakes,Inaccuracies,ACPL,Accuracy,SystemTag,MovesShort>
 <row(s)>
-
----
-
+```
 ### 5) Post-run
-- If both phases succeed, say: **“Done.”**  
-- If any step fails (fetch, parse, eval), state the failing step and what is needed (e.g., “Paste Step-1 doc raw text” or “Provide a valid PGN”).  
+
+- If both phases succeed, say: **“Done.”**
+- On failure (fetch, parse, evaluation), clearly state the step and what’s needed (e.g., “Paste Step-1 doc raw text” or “Provide a valid PGN”).
 
 ---
 
 ### Optional Enrichment
-If evaluation scores are available from Step 1, compute ACPL and classify inaccuracies/mistakes/blunders using thresholds defined in `chessanalysis.md`.  
-If evaluation scores are not available, leave these fields blank.  
+
+If evaluation scores are present from Step 1, compute ACPL and classify inaccuracies/mistakes/blunders using thresholds in `chessanalysis.md`. Leave blank if scores are unavailable.
+
+
