@@ -1,4 +1,4 @@
-# Gate 09 — CSV Contract Conformance
+# Gate 08 — CSV Contract Conformance
 
 **Purpose:** Verify that the final CSV output matches the specification in `chessanalysis.md` exactly.  
 This gate ensures that all fields are ordered correctly, filled according to the policy, and delimited properly.
