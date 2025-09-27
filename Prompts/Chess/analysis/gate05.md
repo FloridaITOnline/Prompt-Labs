@@ -1,4 +1,4 @@
-# Gate 06 — Blunder Mantras & Justification
+# Gate 05 — Blunder Mantras & Justification
 
 **Purpose:** Teach the tactical checklist (“mantras”) that should always be applied when evaluating whether a move is a blunder.  
 This gate ensures that flagged blunders are not just detected numerically (via Gate 05) but also explained using human-readable tactical reasoning.
