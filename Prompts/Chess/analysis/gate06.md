@@ -1,4 +1,4 @@
-# Gate 07 — Accuracy Metric (Fallback)
+# Gate 06 — Accuracy Metric (Fallback)
 
 **Purpose:** Define how to calculate a proxy accuracy score when platform-provided accuracy (e.g., Chess.com) is unavailable.  
 This gate ensures consistency in reporting accuracy values derived from ACPL.
