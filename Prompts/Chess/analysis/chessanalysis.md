@@ -1,4 +1,4 @@
-# Chess Analysis Contract v1.1.1 (Rewritten with Gates Inline)
+# Chess Analysis Contract v1.1.2
 
 ## 🎯 Purpose
 This document defines the authoritative rules for deterministic chess PGN analysis.  
