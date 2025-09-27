@@ -1,4 +1,4 @@
-# Gate 04 — Opening Recognition (ECO/Name)
+# Gate 03 — Opening Recognition (ECO/Name)
 
 **Purpose:** Ensure that openings are recognized correctly from PGN data.  
 This gate establishes when ECO/Opening values can be trusted, when dictionary matching is allowed, and when fields must remain blank.
