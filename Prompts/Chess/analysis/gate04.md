@@ -1,4 +1,4 @@
-# Gate 05 — ACPL & Error Counts
+# Gate 04 — ACPL & Error Counts
 
 **Purpose:** Teach how to compute Average Centipawn Loss (ACPL) for each side and classify inaccuracies, mistakes, and blunders based on evaluation differences.  
 This gate ensures error metrics are derived consistently and deterministically from evaluation data.
