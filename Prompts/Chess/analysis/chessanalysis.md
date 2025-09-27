@@ -1,135 +1,176 @@
-# Chess Analysis Specification (chessanalysis.md)
+# Chess Analysis Contract v1.1.1 (Rewritten with Gates Inline)
 
-**Version:** v1.1.0  
-**Purpose:** This document defines the authoritative rules and readiness checks for analyzing a single PGN into a deterministic CSV row.  
-It also defines the **Gate System** (nine core gates, expandable) that must be passed before analysis may begin.
+## 🎯 Purpose
+This document defines the authoritative rules for deterministic chess PGN analysis.  
+It specifies **input**, **output**, and the **gated validation system** to ensure correctness and reproducibility.
 
 ---
 
-## Part A — Core CSV Contract
+## 📤 Output Contract
 
-**CSV Header (fixed order):**
-
+### CSV Header (Corrected)
 GameId,Platform,Date,MyColor,Opponent,OppElo,Result,ECO,Opening,TimeControl,Blunders,Mistakes,Inaccuracies,ACPL,Accuracy,SystemTag,MovesShort
 
-**Completion Policy:**
-- Fill only when present or deterministically derivable from PGN tags.  
-- No guessing. Unknown fields → blank.  
-- Quote fields with commas; escape `"` by doubling.  
-- Emit CSV only (no prose).  
-- Determinism: same PGN → identical output.  
+markdown
+Copy code
+
+- **Field fill-policy:**
+  - Only fill if **present or deterministically derivable** from PGN.
+  - Unknowns remain **blank** (never guess).
+- **Determinism:** same PGN → same CSV row.
+- **Delimiters:**  
+  - Output wrapped in `===CSV===` blocks.  
+  - Fields with commas are quoted.  
+  - Quotes escaped by doubling.  
+- **Stability:** Identical input must always produce identical output.
 
 ---
 
-## Part B — Readiness Gates
+## 🧩 Gate System
 
-Before PGN analysis begins, the system must pass a sequence of gates.  
-Each gate is defined in a separate file `...\gateXX.md` (two-digit numbering).  
-
-- **Teach:** Excerpt from the corresponding gate doc (concept, rules, examples).  
-- **Learn:** A validation question that must be answered correctly.  
-- **Answer:** The expected correct answer, recorded here once the gate is passed.  
-
-> Progress only when a gate passes. If a gate fails, reflect on the error, retry until correct.  
-> When all gates are passed, readiness is confirmed and PGN analysis may begin.
-
----
-
-### 📚 References
-- **Context Anchoring** — Full explanation of the methodology:  
-  https://raw.githubusercontent.com/FloridaITOnline/Prompt-Labs/refs/heads/main/docs/techniques/context_anchoring.md  
-
-- **Software Testing & Test Theory:**  
-  - Equivalence Partitioning (Wikipedia)  
-    https://en.wikipedia.org/wiki/Equivalence_partitioning  
-  - Boundary-Value Analysis (Wikipedia)  
-    https://en.wikipedia.org/wiki/Boundary-value_analysis  
-  - Basic Unit Testing Theory: Equivalence Partitioning & Boundary Cases (Rochester Institute of Technology, RIT)  
-    https://www.se.rit.edu/~swen-610/topics/Basic%20Unit%20Testing%20Theory.pdf  
+Each gate enforces a constraint. You must **pass in sequence** (00 → 08).  
+Format per gate: **Purpose → Teach → Learn Question → Expected Answer → Notes.**
 
 ---
 
 ### Gate 00 — Guides Loaded & Checks Enabled
-**Teach:** See `...\gate00.md`  
-**Learn:** What constraints govern this analysis (e.g., no guessing, fill policy, delimiter rules)?  
-**Answer:** [to be filled in after passing]  
+**Purpose:** Confirm rules from `chessanalysis.md` are loaded.  
+**Teach:**  
+- Don’t guess; blanks for unknowns.  
+- Strict fill-policy.  
+- Output must be strictly delimited.  
+- Deterministic.  
+- Only structured JSON/CSV, no prose.  
+**Learn Question:** What are the key constraints?  
+**Expected Answer:**  
+- No guessing.  
+- Strict fill-policy.  
+- Use `===STEP1-JSON===` and `===CSV===`.  
+- Deterministic.  
+- Structured only.  
+**Notes:** Fails → stop session.
 
 ---
 
 ### Gate 01 — PGN Integrity & Tag Extraction
-**Teach:** See `...\gate01.md`  
-**Learn:** Which PGN tags are required, which are optional, and how should missing tags be handled?  
-**Answer:** [to be filled in after passing]  
+**Purpose:** Validate PGN structure, extract tags.  
+**Teach:**  
+- Required tags: `Event`, `Site`, `Date`, `Result`, `TimeControl`.  
+- Optional: `White`, `Black`, `WhiteElo`, `BlackElo`, `ECO`, `Opening`.  
+- Normalize dates to `YYYY.MM.DD`.  
+- Strip comments/NAGs/variations.  
+- SAN-only moves.  
+- Extract GameId from `Site` if possible.  
+**Learn Question:** Which tags are required vs optional?  
+**Expected Answer:** Required: Event, Site, Date, Result, TimeControl. Optional: White, Black, WhiteElo, BlackElo, ECO, Opening.  
+**Notes:** Missing tags → blanks, never inferred.
 
 ---
 
 ### Gate 02 — Move Legality & FEN Fidelity
-**Teach:** See `...\gate02.md`  
-**Learn:** What rules ensure moves are legal when reconstructing FEN (castling, en passant, half/fullmove counters)?  
-**Answer:** [to be filled in after passing]  
+**Purpose:** Ensure legal play and correct FEN generation.  
+**Teach:**  
+- Moves must not leave king in check.  
+- SAN disambiguation enforced.  
+- Castling rights update correctly.  
+- En passant only valid immediately.  
+- Halfmove resets on pawn/capture.  
+- Fullmove increments after Black.  
+- FEN must contain all 6 fields.  
+**Learn Question:** What resets the halfmove clock?  
+**Expected Answer:** Any pawn move or capture.  
+**Notes:** Illegal moves invalidate PGN.
 
 ---
 
-### Gate 03 — Score Normalization (White-POV)
-**Teach:** See `...\gate03.md`  
-**Learn:** How are centipawn and mate scores normalized to White’s perspective?  
-**Answer:** [to be filled in after passing]  
+### Gate 03 — Score Normalization (White POV)
+**Purpose:** Normalize evaluations to White’s perspective.  
+**Teach:**  
+- Always convert engine evals to White POV.  
+- Negative evals (good for Black) become positive scores for Black’s side.  
+- Mate scores: + = White mates, – = Black mates.  
+- No eval → blank.  
+**Learn Question:** If eval = –0.5 (Black better), what is the normalized score?  
+**Expected Answer:** +0.5 from White POV.  
+**Notes:** Deterministic across runs.
 
 ---
 
 ### Gate 04 — Opening Recognition
-**Teach:** See `...\gate04.md`  
-**Learn:** What is the procedure for assigning ECO/Opening values, and when must they be left blank?  
-**Answer:** [to be filled in after passing]  
+**Purpose:** Identify ECO / Opening / Variation.  
+**Teach:**  
+- If tags present, use them.  
+- Else match first N moves to openings DB.  
+- Ambiguity → blank.  
+- Never guess.  
+**Learn Question:** What do you do if ECO is missing and no match?  
+**Expected Answer:** Leave ECO blank.  
+**Notes:** Always deterministic.
 
 ---
 
-### Gate 05 — ACPL & Error Counts
-**Teach:** See `...\gate05.md`  
-**Learn:** How do you compute ACPL and classify inaccuracies, mistakes, and blunders?  
-**Answer:** [to be filled in after passing]  
+### Gate 05 — Blunder Mantras & Justification
+**Purpose:** Enforce tactical explanation for blunders.  
+**Teach:**  
+- Core mantras: checks/captures/threats, LPDO, overloads, forks, pins, skewers, weak squares, zwischenzug, pawn storms, “one more move.”  
+- Forcing-move protocol: enumerate checks → captures → threats.  
+- Queen-lift heuristic for mate-nets.  
+- Tie-in: numeric blunders = Loss ≥ 200 cp.  
+**Learn Question:** How are blunders justified?  
+**Expected Answer:** By citing at least one mantra and forcing-move protocol.  
+**Notes:** Human-readable justification mandatory.
 
 ---
 
-### Gate 06 — Blunder Mantras & Justification
-**Teach:** See `...\gate06.md`  
-**Learn:** What checklist should be applied to identify and justify blunders?  
-**Answer:** [to be filled in after passing]  
+### Gate 06 — Accuracy Metric (Fallback)
+**Purpose:** Provide fallback accuracy.  
+**Teach:**  
+- If no evals, compute:  
+accuracy = 1 - (Σ|Δscore_move| / Σ|score_before move|)
+
+yaml
+Copy code
+- Leave blank if denominator zero.  
+- Output real decimal between 0–1.  
+**Learn Question:** When is fallback accuracy used?  
+**Expected Answer:** Only when no eval context exists.  
+**Notes:** Never guess values.
 
 ---
 
-### Gate 07 — Accuracy Metric (Fallback)
-**Teach:** See `...\gate07.md`  
-**Learn:** How is FLITO-Accuracy computed from ACPL, and when should it be used?  
-**Answer:** [to be filled in after passing]  
+### Gate 07 — TimeControl & Metadata Parsing
+**Purpose:** Parse timing data.  
+**Teach:**  
+- Parse `TimeControl` into base + increment.  
+- Malformed → blanks.  
+- Parse UTCDate, UTCTime, move times if explicitly present.  
+- Never infer missing time.  
+**Learn Question:** If `TimeControl` is `600+5`, how is it parsed?  
+**Expected Answer:** Base=600, Increment=5.  
+**Notes:** Only deterministic parsing allowed.
 
 ---
 
-### Gate 08 — TimeControl & Metadata Parsing
-**Teach:** See `...\gate08.md`  
-**Learn:** How should common TimeControl formats be normalized?  
-**Answer:** [to be filled in after passing]  
+### Gate 08 — CSV Contract Conformance
+**Purpose:** Validate CSV formatting.  
+**Teach:**  
+- Header must match spec exactly.  
+- Fill only deterministically; blanks otherwise.  
+- Strict CSV formatting: quoting/escaping enforced.  
+- Output inside `===CSV===`.  
+- Deterministic stability.  
+**Learn Question:** What must the final CSV block contain?  
+**Expected Answer:** Correct header row + one data row, properly delimited, formatted, deterministic.  
+**Notes:** Non-conformance = fail.
 
 ---
 
-### Gate 09 — CSV Contract Conformance
-**Teach:** See `...\gate09.md`  
-**Learn:** What must the final CSV row look like?  
-**Answer:** [to be filled in after passing]  
+## 🔁 Teach / Learn / Answer Loop
+Each gate requires answering its validation Q before proceeding.  
+Failure = stop until corrected.
 
 ---
 
-## Part C — Optional Extensions
-
-- **Additional Gates:** May be added beyond Gate 09 using `...\gate10.md`, `...\gate11.md`, etc.  
-- **Optional Modules:** Tactical Audit or other enrichment rules may be defined separately, but must follow the same Teach/Learn/Answer pattern.  
-
----
-
-## I/O Protocol
-
-- **Input:** A complete PGN (headers + moves), plus optional enrichment flags.  
-- **Output:**  
-  1. Anchored CSV row (Part A)  
-  2. Optional extensions (e.g., Tactical Audit)  
-- **No prose** — only structured output blocks.  
+## 🌱 Extensions
+- Additional gates (e.g. Gate 09+) may be added modularly.  
+- Tactical audits, error summaries, or extra metadata supported via append-only fields.  
