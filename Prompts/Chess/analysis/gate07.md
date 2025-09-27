@@ -1,4 +1,4 @@
-# Gate 08 — TimeControl & Metadata Parsing
+# Gate 07 — TimeControl & Metadata Parsing
 
 **Purpose:** Standardize how PGN `TimeControl` values (and related metadata) are parsed and normalized into the CSV output.  
 This gate ensures consistent handling of time formats across platforms.
