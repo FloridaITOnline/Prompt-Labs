@@ -1,4 +1,4 @@
-# Chess Analysis Contract v1.1.2
+# Chess Analysis Contract v1.1.3
 
 ## 🎯 Purpose
 This document defines the authoritative rules for deterministic chess PGN analysis.  
