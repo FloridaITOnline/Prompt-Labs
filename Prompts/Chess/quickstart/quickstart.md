@@ -179,15 +179,24 @@ Checks:
 
 ---
 
-## 10) Optional Commentary Phase (Human-Readable, OFF by default)
-- Only emit when the caller sets `--commentary=on`.
-- Must appear **after** CSV and be enclosed in:
+## 10) Commentary Phase (Always ON)
+- Commentary automatically emits **after** the CSV block and **before** the UX block.
+- It must always be enclosed in:
 ```
 ===COMMENTARY-START===
-<2–6 bullet points; no more than 1000 chars total. Deterministic template-based text.>
+<2–6 bullet points; ≤1000 characters total. Deterministic template-based text.>
 ===COMMENTARY-END===
 ```
-- Commentary references CriticalMoments and SystemTag; never contradicts numeric enrichment.
+- Commentary must be deterministic, based only on the enriched metrics and CriticalMoments.  
+  Never include random adjectives or phrasing drift.
+- Commentary content template:
+  1. One bullet summarizing result and opening (from tags).
+  2. One bullet describing the key tactical or positional turning point.
+  3. One bullet summarizing the best and worst moves (from CriticalMoments).
+  4. One bullet evaluating accuracy (using ACPL and Accuracy fields).
+  5. Optional final bullet with a neutral closing observation (“Clean conversion” / “Wild imbalance”).
+- Commentary never appears inside the JSON or CSV fences.
+- To disable commentary, the caller must explicitly set `--commentary=off` (rarely used).
 
 ---
 
