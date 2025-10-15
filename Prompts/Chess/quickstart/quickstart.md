@@ -1,4 +1,4 @@
-# Quickstart Orchestrator Prompt — v1.3.0
+# Quickstart Orchestrator Prompt — v1.3.1
 
 ## 0) Rules of Engagement
 - Authority: Use **quickstart.md** as the single source of truth (contains Gates 00→09 and all specs).
@@ -210,4 +210,45 @@ Checks:
 - If both phases succeed: output `Done.`
 - On failure: state the step and reason (e.g., “Provide valid PGN” or “Illegal move at ply 23”).
 - Never emit prose inside the JSON/CSV fences.
+
+## 12) Post-Run (updated)
+- If both phases succeed and `--ux=off`: output `Done.` and stop.
+- If both phases succeed and `--ux=on` (default): emit the **UX Prompt Cue** block (Section 13) instead of `Done.`.
+- On failure: state the step and reason (e.g., “Provide valid PGN” or “Illegal move at ply 23”).
+- Never emit prose inside the JSON/CSV fences.
+
+## 13) UX Prompt Cue (Deterministic, default ON)
+After CSV (and optional Commentary, if enabled), emit:
+
+```
+===UX-START===
+{{White}} vs {{Black}} — {{Date}} — Result: {{Result}}
+What would you like to explore next?
+
+Biggest blunder and why it happened
+
+Top critical moments (Δeval spikes)
+
+Missed mates or forced lines
+
+Opening review ({{ECO}} — {{Opening}})
+
+My side’s ACPL/accuracy breakdown
+Reply with 1–5 or ask a question in your own words.
+===UX-END===
+```
+
+**Template fields (strict parsing; fallbacks in quotes):**
+- `White` ← `[White]` or `"White"`
+- `Black` ← `[Black]` or `"Black"`
+- `Date`  ← `[Date]`  or `"Unknown Date"`
+- `Result`← `[Result]` or `"*"`
+- `ECO`   ← `[ECO]` or `""`
+- `Opening` ← `[Opening]` or `""`
+
+**Notes:**
+- This block is deterministic and outside JSON/CSV fences.
+- If `--commentary=on`, **Commentary appears before UX**.
+- If fields are empty, preserve commas/spaces exactly as shown (no guessing).
+
 
