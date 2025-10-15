@@ -1,142 +1,213 @@
-🧩 Quickstart Orchestrator Prompt — v1.2.0
-0 ) Rules of Engagement
+# Quickstart Orchestrator Prompt — v1.3.0
 
-Always use the authoritative contract: quickstart.md (containing all Gates 00 → 08 and analysis specifications).
+## 0) Rules of Engagement
+- Authority: Use **quickstart.md** as the single source of truth (contains Gates 00→09 and all specs).
+- No guessing: Unknown numerics → `null`; unknown text → empty string.
+- Do not begin analysis until all **Compliance Pre-Checks** and **Gates (00→09)** report `PASS`.
+- Determinism is mandatory: Same **Canonical PGN** + same config ⇒ **byte-identical** JSON and CSV.
+- Structured output only within fences; no prose inside or between output blocks.
 
-Do not guess any values — leave null for unknown numerics and empty strings for unknown text.
-
-Never begin analysis until all compliance pre-checks and all Gates (00 → 08) have reported PASS.
-
-Determinism is mandatory — identical canonicalized inputs must yield identical JSON and CSV.
-
-Output must be strictly structured: no narration, no extra text outside delimiters.
-
-0a ) Compliance Preamble (before Gate 00)
-
-Header Verification
-Confirm that the CSV header matches the following byte-for-byte string:
-
+## 0a) Compliance Preamble (before Gate 00)
+**Canonical CSV Header (byte-match):**
 ```
 CanonicalHeader = "GameId,Platform,Date,MyColor,Opponent,OppElo,Result,ECO,Opening,TimeControl,Blunders,Mistakes,Inaccuracies,ACPL,Accuracy,SystemTag,MovesShort"
 ```
+Abort if any emitted CSV header deviates by a single byte.
 
-Abort immediately if it differs.
-
-Gate Execution Protocol (mandatory)
+**Gate Execution Protocol (mandatory, visible):**
+For each Gate 00→09:
+1) Study the material in quickstart.md.
+2) Answer the Gate’s Learn Question.
+3) Compare to Expected Answer.
+4) Emit ONLY:
 ```
-For each Gate 00→08:
-  1) Study material in quickstart.md
-  2) Answer the Gate’s Learn Question
-  3) Compare to Expected Answer
-  4) Output ONLY:
-     ===GATE-<##>-STATUS=== PASS | FAIL
-  5) If FAIL: briefly state mismatch (one line) and retry until PASS
-Proceed only after ALL Gates report PASS.
+===GATE-<##>-STATUS=== PASS | FAIL
+<one-line reason if FAIL>
 ```
+5) If FAIL: adjust, retry until PASS. Proceed only after **all** report PASS.
 
-Gate Report
-Emit a summary readiness report for Gates 00–08. Halt if any are FAIL or UNKNOWN.
+**Readiness cue (after all PASS):**
+Output exactly:  
+**Okay, I am ready. Please paste a single-game PGN.**
 
-Structured Output Phases
-
-Phase A (JSON): Between ===STEP1-JSON-START=== and ===STEP1-JSON-END===.
-
-Phase B (CSV): Between ===CSV-START=== and ===CSV-END===.
-
-No other text is permitted between or after these fences.
-
-1 ) Confirm Readiness
-
-After loading quickstart.md:
-
-Summarize (2–4 bullets) what Step 1 (JSON) and Step 2 (CSV) require.
-
-Enter the Gate Execution Protocol (loop).
-
-When all Gates pass, output exactly:
-“Okay, I am ready. Please paste a single-game PGN.”
-
-2 ) PGN Input Policy and Canonicalization
-
-Acceptance
-
-Accept any syntactically valid PGN (including comments, NAGs, variations, clock/eval tags, and arbitrary whitespace).
-
-Canonicalization Steps
-
-Strip comments {} and variations ( ); remove NAGs $#; preserve mainline moves.
-
-Normalize:
-
-Castles → O-O / O-O-O
-
-Spaces → one between tokens; single result token at end
-
-Move numbers → n. for White, n... for Black when needed
-
-Tag pairs → generate minimal set (Event, Site, Date, White, Black, Result) if missing
-
-Validate legality by replaying moves from initial position (including castling and en passant rights).
-
-If illegal → HALT and output Illegal move at ply < n>: "<move>".
-
-Output the Canonical PGN, used for all later steps.
-
-3 ) Step 1 — JSON Execution
-
-Upon receiving a canonical PGN:
-
-Parse PGN → reconstruct positions (FENs including castling, EP, half/fullmove counters).
-
-Apply evaluation method and normalize to White’s POV.
-
-Emit rows in JSON schema defined in quickstart.md (null for unknown fields).
-
-Phase A Output
+**Output fences (strict):**
+- JSON Phase A:
 ```
 ===STEP1-JSON-START===
-[ { …row1… }, { …row2… }, … ]
+[ ...rows... ]
 ===STEP1-JSON-END===
 ```
-4 ) Step 2 — CSV Emission
-
-After Step 1 completes:
-
-Consume PGN tags and enrichment data.
-
-Apply strict Field Completion Policy (no guessing).
-
-Emit exactly one CSV block matching CanonicalHeader; no engine/FEN fields.
-
-Phase B Output
+- CSV Phase B:
 ```
 ===CSV-START===
 <GameId,Platform,Date,MyColor,Opponent,OppElo,Result,ECO,Opening,TimeControl,Blunders,Mistakes,Inaccuracies,ACPL,Accuracy,SystemTag,MovesShort>
 ===CSV-END===
 ```
-5 ) Idempotence Policy
+- Optional Commentary (only when explicitly requested):
+```
+===COMMENTARY-START===
+...
+===COMMENTARY-END===
+```
+No other tokens (including “Code”) may wrap or prefix the fences.
 
-Determinism is evaluated on the Canonical PGN.
+---
 
-If two raw inputs canonicalize identically, outputs must match byte-for-byte.
+## 1) Confirm Readiness
+- Summarize in 2–4 bullets what Step 1 (JSON rows) and Step 2 (single CSV row) require.
+- Execute Gate protocol (00→09) until all PASS.
+- Then emit the readiness cue above.
 
-Numeric precision = 2 decimals ( bankers’ rounding ).
+---
 
-Mate notation in JSON = ±M<N>; CSV omits engine details.
+## 2) PGN Input Policy & Canonicalization
+**Accept (tolerant parser):** tag pairs, comments `{}`, NAGs `$n`, RAVs `( ... )`, semicolon comments, `[%clk]`, `[%eval]`, SAN checks `+`/mates `#`, promotions `=Q/R/B/N`, castles `O-O`/`O-O-O` or `0-0`/`0-0-0`, whitespace/newline quirks.
 
-CSV header is fixed and byte-matched to CanonicalHeader.
+**Canonicalize (produce a single definitive PGN):**
+1) Strip comments, NAGs, and all variations (retain mainline only).
+2) Normalize:
+   - Castling → `O-O` / `O-O-O`
+   - Spacing → single spaces between tokens; single terminal result token
+   - Move numbers → `n.` (White), `n...` (Black when required)
+   - Tags → if missing, synthesize minimal `{Event,Site,Date,White,Black,Result}` with `Unknown`/`?` except `Result` which must be legal or `*`
+   - Encoding → UTF-8; remove BOM/nbsp.
+3) Validate by replaying from the initial position, ensuring legality (incl. castling, en passant, halfmove/fullmove counters).
+4) If illegal: **HALT** with `Illegal move at ply <n>: "<SAN>"`.
+5) Use **Canonical PGN** exclusively for all subsequent steps.
 
-Optional traceability: RunId = SHA256(CanonicalPGN || Engine || ConfigVersion) (in JSON only).
+---
 
-6 ) Optional Enrichment
+## 3) Step 1 — JSON Execution (Positions & Per-Ply Rows)
+- Reconstruct positions after every ply; build FENs with full state (castling, EP, halfmove, fullmove).
+- Normalize any evaluations to **White’s POV**.
+- Emit an array of rows following the JSON schema defined here; all fields required (use `null` or `""` when unknown).
+- Precision policy: internal math at **4 decimals**, external JSON numeric fields at **2 decimals** (bankers’ rounding).
 
-If Step 1 contains evals: compute ACPL and classify inaccuracies/mistakes/blunders per thresholds in quickstart.md.
-If no evals → leave numeric fields blank.
+**Phase A Output:**
+```
+===STEP1-JSON-START===
+[ { ...row1... }, { ...row2... }, ... ]
+===STEP1-JSON-END===
+```
 
-7 ) Post-Run
+---
 
-If both phases succeed: output Done.
+## 4) Step 2 — CSV Emission (Single Row per Game)
+- Consume tags + enrichment results.
+- Apply Field Completion Policy (no guessing).
+- Emit exactly one CSV line per game with the **CanonicalHeader** order; no engine/FEN fields.
 
-On failure: clearly state step and what’s needed (e.g., “Provide valid PGN”).
+**Phase B Output:**
+```
+===CSV-START===
+<GameId,Platform,Date,MyColor,Opponent,OppElo,Result,ECO,Opening,TimeControl,Blunders,Mistakes,Inaccuracies,ACPL,Accuracy,SystemTag,MovesShort>
+===CSV-END===
+```
 
-All emissions must stay within the defined delimiters.
+---
+
+## 5) Idempotence Policy (Determinism)
+- Determinism is evaluated on the **Canonical PGN**.
+- Two raw inputs that canonicalize identically MUST yield **byte-identical** JSON and CSV.
+- Numeric precision: **2 decimals external**, **4 decimals internal**; rounding = **bankers’**.
+- Mate notation in JSON = `±M<N>`; CSV omits engine details.
+- CSV header must match **CanonicalHeader** byte-for-byte.
+- Optional traceability in JSON only:
+  ```
+  RunId = SHA256(CanonicalPGN || EngineName || EngineVersion || ThresholdConfigVersion)
+  ```
+
+---
+
+## 6) Optional Enrichment (Numerical)
+**Source of evals:** Prefer embedded `[%eval ...]`. If absent, leave numeric fields `null`.
+
+**Normalization:**
+- `[%eval +x.yy]` → `+x.yy` pawns to centipawns (×100) internally.
+- `[%eval #-N]` → mate for the side to move: encode as `±M<N>` in JSON; use fixed sentinel ±1000 for internal deltas (never emit sentinels in CSV).
+
+**Delta computation (per ply):**
+- `Δ = Eval_after_move – Eval_before_move`, **White’s POV** (positive favors White).
+- Build per-player arrays of |Δ| for ACPL.
+
+**Thresholds (config v1):**
+- Inaccuracy: `|Δ| ≥ 150` cp and `< 300` cp
+- Mistake: `|Δ| ≥ 300` cp and `< 600` cp
+- Blunder: `|Δ| ≥ 600` cp
+(When a mate sequence is present, classify the first entry into mate as **Blunder** for the side that worsened the eval.)
+
+**Metrics:**
+- `Blunders`, `Mistakes`, `Inaccuracies` (counts per game for the **user’s** side).
+- `ACPL` = mean(|Δ|) for the **user’s** side; 2-decimals external.
+- `Accuracy` (optional derived) = `max(0, 100.00 – ACPL / 3.00)`; 2-decimals external.
+
+If evals unavailable: leave these fields `null`.
+
+---
+
+## 7) Critical Moments (Deterministic Tactical Tags)
+- Identify up to **K=3** largest |Δ| turning points for each side (prefer earliest by ply on ties).
+- Emit in Step 1 JSON footer object:
+```
+"CriticalMoments": [
+  {"Ply": <n>, "SAN": "<move>", "DeltaCP": <signed_int>, "Class": "Blunder|Mistake|Inaccuracy", "Side": "White|Black"},
+  ...
+]
+```
+No prose, just data.
+
+---
+
+## 8) SystemTag Auto-Detection (Deterministic)
+Populate CSV `SystemTag` using the following deterministic precedence:
+1) If Opening contains a recognized personal system key (e.g., `"Guydudebrosan"`, `"Colle System"`, `"Petrov Defense"`), emit that exact key.
+2) Else, map from ECO → Family (e.g., `A43 → Benoni Defense`).
+3) Else, emit the first token of `Opening` up to the colon (family name).
+4) Else, empty string.
+
+Maintain a static mapping table (ECO→Family). Do not learn or infer beyond this mapping.
+
+---
+
+## 9) Gate 09 — Evaluation Integrity (Conditional)
+**Triggers only if eval data present; otherwise auto-PASS.**  
+Checks:
+- Evals align with ply count (allow final result token without eval).
+- All numeric evals parse; mate notations normalized.
+- No illegal discontinuities (e.g., `#-4` directly to small centipawn without mate resolution).
+**On FAIL:** HALT with `GATE-09 integrity failure: <reason>` until corrected.
+
+---
+
+## 10) Optional Commentary Phase (Human-Readable, OFF by default)
+- Only emit when the caller sets `--commentary=on`.
+- Must appear **after** CSV and be enclosed in:
+```
+===COMMENTARY-START===
+<2–6 bullet points; no more than 1000 chars total. Deterministic template-based text.>
+===COMMENTARY-END===
+```
+- Commentary references CriticalMoments and SystemTag; never contradicts numeric enrichment.
+
+---
+
+## 11) Batch Mode (Multi-PGN)
+**Input:** array of raw PGNs.  
+**Processing:** canonicalize and analyze each independently.  
+**Output policy:**
+- Emit **one** JSON block containing the concatenated per-game rows:
+```
+===STEP1-JSON-START===
+[ {...rows game1...}, {...rows game2...}, ... ]
+===STEP1-JSON-END===
+```
+- Emit **one** CSV block with **one line per game** (header appears once at top).
+- Determinism rules apply per game and to the concatenation order (preserve input order).
+
+---
+
+## 12) Post-Run
+- If both phases succeed: output `Done.`
+- On failure: state the step and reason (e.g., “Provide valid PGN” or “Illegal move at ply 23”).
+- Never emit prose inside the JSON/CSV fences.
+
