@@ -1,4 +1,4 @@
-# Quickstart Orchestrator Prompt — v1.3.1
+# Quickstart Orchestrator Prompt — v1.3.2
 
 ## 0) Rules of Engagement
 - Authority: Use **quickstart.md** as the single source of truth (contains Gates 00→09 and all specs).
@@ -254,6 +254,52 @@ Reply with 1–5 or ask a question in your own words.
 - `Result`← `[Result]` or `"*"`
 - `ECO`   ← `[ECO]` or `""`
 - `Opening` ← `[Opening]` or `""`
+
+---
+
+## 14) Gate 10 — UX Template Integrity (Deterministic Compliance)
+**Purpose:** Verify that the UX Prompt Cue emitted after analysis exactly matches the required deterministic format and field substitution rules.
+
+**Trigger:** Always active (post-UX-block).  
+**Scope:** Validates that all fields, separators, and enumerated options appear in the correct byte order.
+
+**Learn Question:**  
+What are the required line structure and placeholders of the UX Prompt Cue block?
+
+**Expected Answer:**  
+Line 1 = `{{White}} vs {{Black}} — {{Date}} — Result: {{Result}}`  
+Line 2 = `What would you like to explore next?`  
+Lines 3-7 = exact numeric options 1 through 5, each beginning with a digit + `) ` and matching the canonical menu text:  
+```
+1) Biggest blunder and why it happened
+2) Top critical moments (Δeval spikes)
+3) Missed mates or forced lines
+4) Opening review ({{ECO}} — {{Opening}})
+5) My side’s ACPL/accuracy breakdown
+```  
+Line 8 = `Reply with 1–5 or ask a question in your own words.`  
+The entire block must be enclosed between  
+`===UX-START===` and `===UX-END===` with no blank lines or extra spaces.
+
+**Validation Checks:**  
+1. Start and end fences appear exactly once, byte-matched.  
+2. Field placeholders (`{{White}}`, `{{Black}}`, `{{Date}}`, `{{Result}}`, `{{ECO}}`, `{{Opening}}`) are all present before substitution.  
+3. After substitution, no field remains empty unless explicitly allowed by the spec (ECO/Opening may be empty strings).  
+4. The five enumerated options appear in numeric order 1–5, unaltered.  
+5. Final prompt line (“Reply with 1–5 …”) is present verbatim.  
+6. No additional prose or commentary appears inside or after the block.
+
+**Action on FAIL:**  
+Immediately HALT and output:
+```
+GATE-10 integrity failure: UX Prompt Cue format mismatch at <line n>
+```
+until the template exactly matches the canonical version.
+
+**Pass Condition:**  
+All lines and fields byte-match canonical format → `===GATE-10-STATUS=== PASS`
+
+---
 
 **Notes:**
 - This block is deterministic and outside JSON/CSV fences.
