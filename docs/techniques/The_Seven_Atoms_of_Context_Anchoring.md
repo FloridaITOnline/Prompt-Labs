@@ -74,3 +74,6 @@ Each bond represents an active feedback, validation, or state-preserving mechani
 ## 🌐 Summary
 
 The Seven Atoms of Context Anchoring describe the irreducible parts of a prompt-native computation model. These atomic units combine to form complex reasoning systems capable of persistence, validation, and control — **entirely within language**. They serve as the building blocks for higher-level structures like Gates, Anchors, and Self-Audit Loops, defining the architecture of Context Anchoring as both a theoretical model and a practical design pattern.
+
+---
+Rodriguez, J. (2025). The Seven Atoms of Context Anchoring. Public Domain Definition, Florida IT Online (Prompt-Labs Series).
