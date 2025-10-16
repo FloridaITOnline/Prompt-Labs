@@ -54,14 +54,14 @@ This enables the creation of **prompt-native systems** that exhibit deterministi
 7. **Next Gate** — proceeds only once stability is achieved.  
 8. **Anchored State** — becomes the seed for the next cycle or iteration.
 
-🧮 ###Theoretical Parallels
+🧮 ## Theoretical Parallels
 Computing Concept	Anchoring Analogue	Purpose
 Finite-State Machine	Anchor states and transitions	Defines deterministic reasoning flow.
 Control Loop	Re-anchor / validate cycle	Maintains stability under iterative prompting.
 Entropy Reduction	Reused context	Narrows prediction space for consistency.
 Reinforcement Feedback	Validated examples	Reinforces correct output behavior.
 
-🧱 ###Why It Matters
+🧱 ## Why It Matters
 Context Anchoring shows that language models can compute, validate, and persist logic within structured prompts.
 This bridges the gap between generative AI and classical programming, unlocking a new paradigm for prompt-native application design — where control flow, state, and verification all exist within language itself.
 
