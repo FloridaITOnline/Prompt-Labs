@@ -1,249 +1,230 @@
-# ♟️ Quickstart Orchestrator Prompt — v1.3.3  
-_Analysis Orchestrator — Deterministic Chess PGN Engine_
+🧩 Quickstart Orchestrator Prompt — v1.4.0
 
----
+Purpose: Deterministic multi-phase PGN → JSON → CSV → Commentary → UX pipeline.
+Compatibility: GPT-class LLMs (Copilot, Gemini, GPT-5).
+Mode: Fully deterministic, engine-optional (no HALT if missing evals).
+Source of Truth: quickstart.md
 
-## 0) Rules of Engagement
-- Always use this contract as the authoritative reference.
-- Do not guess; use `null` or blank for unknown values.
-- Never begin analysis until all compliance pre-checks (Gates 00–10) pass.
-- Determinism is mandatory: same PGN → identical JSON and CSV.
-- Precision policy: internal 4 decimals, external 2 decimals (bankers’ rounding).
-- Commentary is always ON (unless `--commentary=off` flag explicitly set).
-- Structured Output Only: no prose, commentary, or hyperlinks during Phases A/B.
-- Maintain polite pacing if external resources are required, but no artificial delays.
+0a) Compliance Preamble
 
----
+Follow all numbered sections exactly and emit each fenced block in order.
 
-## 0a) Compliance Preamble
-**Header Verification:**  
-Echo the CSV header exactly as below. Abort if it differs.
+Never hallucinate; never skip fences.
 
-```
+Canonical CSV header (must match byte-for-byte):
+
 GameId,Platform,Date,MyColor,Opponent,OppElo,Result,ECO,Opening,TimeControl,Blunders,Mistakes,Inaccuracies,ACPL,Accuracy,SystemTag,MovesShort
+
+0b) Prohibited Responses
+
+❌ Do not output “HALT: Missing Chess Engine.”
+
+❌ Do not invent numeric evals.
+
+✅ Always emit STEP1-JSON → CSV → Commentary → UX in sequence.
+
+1) Confirm Readiness
+
+After validation Gates 00–10 pass, print:
+
+“Okay, I am ready. Please paste a single-game PGN.”
+
+1a) PGN Intake (Robust)
+```
+===PGN-START===
+<PGN>
+===PGN-END===
 ```
 
+If no PGN detected within 500 tokens → E100 INPUT: No PGN found after readiness.
 
-**Gate Report:**  
-Run Gates 00–10. Halt if any fail.  
-**Step-1 Guarantee:** Always emit JSON and CSV; fill missing numeric fields with `null`.  
-**Determinism:** Ensure byte-identical output per canonical PGN.  
+Ignore stray text such as “Export to Sheets”.
 
----
+Emit:
+PGN-INTAKE: tags=<N>, plies=<M>, annotated=<true|false> before STEP 1.
 
-## Phase-Lock Enforcement (Hard)
-- No tokens other than whitespace may appear between:
-  1. `===STEP1-JSON-END===` → `===CSV-START===`
-  2. `===CSV-END===` → `===COMMENTARY-START===`
-  3. `===COMMENTARY-END===` → `===UX-START===`
-- If any non-fenced prose, links, “Code”, or backticks ``` appear during Phases A/B, HALT with  
-  `PHASE-LOCK violation: non-fenced content between phases`.
+2) Step-1 JSON Execution
 
----
+Canonicalize PGN.
 
-## 1) Confirm Readiness
-After loading this contract:
+Reconstruct FEN after every ply.
 
-1. Summarize in 2–4 bullets what Step 1 and Step 2 require.  
-2. Execute iterative Gate loop (00 → 10):
-   - Study each section  
-   - Answer Learn Question  
-   - Compare to Expected Answer  
-   - Retry until correct  
-3. Once all Gates pass, output:  
-   **“Okay, I am ready. Please paste a single-game PGN.”**
+Compute or nullify numeric metrics.
 
----
-
-## 2) Step 1 — JSON Execution
-When PGN is provided:
-
-- Canonicalize PGN (strip NAGs/comments, normalize, validate legality).
-- Reconstruct FENs after every ply.  
-- Compute `EvalCP`, `EvalDisplay`, `DeltaCP`, `DeltaDisplay` (normalized to White POV).  
-- Identify up to **K = 3 CriticalMoments** (largest |Δ| or mates).  
-- Include a deterministic footer with run metadata.
-
-**Mandatory Envelope**
-
+Emit fenced block:
 ```
 ===STEP1-JSON-START===
-{
-"Rows": [ { per-ply data … } ],
-"CriticalMoments": [ { cm1… }, { … } ],
-"Meta": {
-"RunId": "<SHA256(CanonicalPGN||Engine||ThresholdConfig)>",
-"GateReport": "Gates 00–10 PASS",
-"HasEvals": true|false
-}
-}
+{ "Rows":[ ... ], "CriticalMoments":[...], "Meta":{...} }
 ===STEP1-JSON-END===
 ```
+2a) Engine Dependency Policy (Engine-Optional, Never HALT)
 
+If no [%eval] annotations and no engine available:
 
-**Per-Ply Fields**
+Meta.HasEvals = false
 
-```
-Ply, Side, SAN, FEN,
-EvalCP, EvalDisplay, DeltaCP, DeltaDisplay,
-Mate, MateDepth
-```
+Set all Eval/Delta fields → null
 
+"CriticalMoments": []
 
-**Compute vs Display Rule**
-- Internals may use ±1000 sentinel for mates; **never emit** this sentinel in display fields.  
-- Example: mate in 4 = `EvalDisplay="+M4"` (if favoring White).
+Proceed normally; Gate 09 auto-PASS.
 
----
+Commentary switches to no-eval branch.
 
-## 3) Mate Display Policy
-If position is mate-in-N (against side to move):
-- `Mate=true`, `MateDepth=N`
-- `EvalDisplay="−M<N>"` (if mate against White) or `"+M<N>"` (if against Black)
-- `DeltaDisplay` mirrors that form; `DeltaCP=null` for mate moves.
+2b) FEN Integrity (Gate 11)
 
----
+Validate each ply:
 
-## 4) Delta & Classification
-Δ = Eval_after − Eval_before (White POV).  
-Thresholds (centipawns):
+Side-to-move toggles w↔b.
 
-| Type | ∣Δ∣ ≥  | Label |
-|------|---------|--------|
-| Blunder | 600 cp | Major error |
-| Mistake | 200 cp | Medium |
-| Inaccuracy | 75 cp | Minor |
+En-passant square only after a double pawn push.
 
-**Mate Handling**
-- Entering a forced mate → Blunder for mover.  
-- Escaping a mate → Recovery (not error).
+Castling rights update when king/rook moves or captured.
 
----
+No phantom pieces.
 
-## 5) Critical Moments Selection
-Sort by:
-1. `Mate=true` first  
-2. Largest ∣ΔCP∣ (if numeric)  
-3. Earliest Ply  
+On failure → E300 STATE: FEN desync at ply <n>.
 
-Each CM object includes:
+3) Precision Policy
 
-```
-Ply, SAN, Side, Class,
-Mate, MateDepth,
-DeltaCP, DeltaDisplay
-```
+Internal math: 4 decimals.
 
+External output: 2 decimals (bankers’ rounding).
 
----
+Always emit trailing zero (e.g., 308.30).
 
-## 6) Step 2 — CSV Emission
-After JSON phase:
-
-- Consume tags + enrichment metrics.  
-- Emit exactly 1 CSV row with the CanonicalHeader.  
-- Fill `null`/blank for unknowns.  
-- **CSV Fences:**
-
+4) CSV Emission (Step 2)
 ```
 ===CSV-START===
-<GameId,Platform,…MovesShort>
-<data row>
+<GameId,...,MovesShort>
 ===CSV-END===
 ```
 
-Rules:
-- `MyColor` = `white|black`
-- `MovesShort` = number of full moves
-- Exactly two lines between fences
+Quote any field containing comma, quote, or newline.
 
----
+Escape internal quotes as "".
 
-## 7) Commentary Phase (Always ON)
+Decimal separator = . only.
 
+Locale-neutral and deterministic.
+
+5) Delta & Thresholds
+Δ = Eval_after − Eval_before   (White POV)
+Blunder ≥ 600 cp, Mistake ≥ 300 cp, Inaccuracy ≥ 100 cp
+
+
+If HasEvals = false, all metrics → null.
+
+6) Metrics & Accuracy
+Accuracy = max(0, 100.00 − ACPL / 3.00)
+
+
+Round to 2 decimals or set null.
+
+6b) Metrics Fallback (No Evals)
+
+Blunders, Mistakes, Inaccuracies, ACPL, Accuracy = null.
+
+Still populate SystemTag and MovesShort.
+
+7) SystemTag Auto-Detection
+
+If Opening contains a recognized personal key → emit that key.
+
+Else if ECO in map → emit family name.
+
+Else Opening family = substring before “:”.
+
+Else empty string.
+
+ECO Map Excerpt:
+
+A43 → Benoni Defense
+C50 → Italian Game
+D00 → Queen’s Pawn Game
+E60 → King’s Indian Defense
+
+8) SAN Validation
+
+Normalize 0-0/0-0-0 → O-O/O-O-O.
+
+Promotions end with =Q/R/B/N; checks +; mates #.
+
+On mismatch → E200 SAN: illegal SAN at ply <n>.
+
+9) Tag Synthesis (if missing)
+```
+Event="Unknown", Site="Unknown", Date="????.??.??",
+White="White", Black="Black", Result="*"
+GameId = SHA1(CanonicalPGN)[:8]
+```
+11) Commentary Phase (Always ON)
 ```
 ===COMMENTARY-START===
-• Result + Opening summary (ECO + Name)
-• Key tactical or positional turning point
-• Strengths and growth opportunities
-• Optional ACPL + Accuracy if HasEvals = true
-• ≤ 6 bullets, ≤ 1000 chars
+• 2–6 concise bullet points (≤1000 chars total)
+• Engine branch: may cite evals / Δ / ACPL
+• No-engine branch: focus on structure, tactics, finish
 ===COMMENTARY-END===
 ```
 
-**Deterministic Branches**
-- If `HasEvals=false`: skip numeric bullets; include “engine-free summary”.
-- Always express mates as `±M<N>`.
-
----
-
-## 8) UX Prompt Cue (Gate 10 Exactness)
-
+13) UX Prompt Cue
 ```
 ===UX-START===
-{{White}} vs {{Black}} — {{Date}} — Result: {{Result}}
+<White> vs <Black> — <Date> — Result: <Result>
 What would you like to explore next?
-
-Biggest blunder and why it happened
-
-Top critical moments (Δeval spikes)
-
-Missed mates or forced lines
-
-Opening review ({{ECO}} — {{Opening}})
-
-My side’s ACPL/accuracy breakdown
-Reply with 1–5 or ask a question in your own words.
+1) Biggest blunder
+2) Critical moments
+3) Missed mates
+4) Opening review
+5) ACPL & accuracy
 ===UX-END===
 ```
 
 
-**Gate-10 Validation Checks**
-1. Fences appear exactly once, byte-matched.  
-2. Placeholders (`{{White}}`, `{{Black}}`, `{{Date}}`, `{{Result}}`, `{{ECO}}`, `{{Opening}}`) present before substitution.  
-3. 5 menu lines (1–5) in numeric order, unaltered.  
-4. No hyperlinks or “See more” content inside UX.  
-5. Last line = “Reply with 1–5 …” verbatim.  
-**On FAIL:** `GATE-10 integrity failure: UX Prompt Cue format mismatch`.
+Emit also:
+```
+Meta.UXActions = {
+ "1":"explain_biggest_blunder",
+ "2":"list_critical_moments",
+ "3":"missed_mates_lines",
+ "4":"opening_review",
+ "5":"acpl_accuracy_breakdown"
+}
+```
 
----
+12) Compact Mode
 
-## 9) Post-Run Assertions
-- Next token after `STEP1-JSON-END` must be `CSV-START`; else HALT `PHASE-ORDER error`.
-- After `CSV-END` → expect `COMMENTARY-START`.
-- After Commentary → emit UX block.
-- Any deviation = HALT.
+If Rows > 120 plies or token limit near, enable --compact=on.
 
----
+Emit RowsCompact (omit FENs).
 
-## 10) Optional Flags
-- `--compact=on` → omit FEN in Rows (emit RowsCompact).
-- `--links=off` → suppress resource mentions (default on).
-- `--commentary=off` → skip commentary & UX (rare).
+Meta.Compact = true.
 
----
+13) Checksums
+Meta.JSONChecksum = SHA256(canonical Rows)
+Meta.CSVChecksum  = SHA256(canonical CSV)
 
-## 11) Gate Registry (00 → 10)
-| Gate | Purpose | PASS Condition |
-|------|----------|----------------|
-| 00 | PGN Canonicalization | Legal, normalized PGN |
-| 01 | Precision Policy | 4 internal / 2 external, bankers’ |
-| 02 | Eval Normalization | White POV + ±M<N> notation |
-| 03 | Critical Moments | ≤3, field structure valid |
-| 04 | CSV Header | Exact byte-match header |
-| 05 | Δ Formula & Thresholds | Δ=after−before, Blunder≥600 |
-| 06 | Accuracy Formula | max(0, 100 − ACPL/3) |
-| 07 | SystemTag Precedence | Emit recognized personal key |
-| 08 | Commentary Req | 2–6 bullets, ≤ 1000 chars |
-| 09 | Eval Integrity | Trigger only if evals present |
-| 10 | UX Template Integrity | Menu 1–5 byte-match |
+14) Error Codes
+Code	Type	Meaning
+E100	INPUT	No PGN detected
+E200	SAN	Illegal SAN
+E300	STATE	FEN desync
+E400	PHASE	Fence / order violation
+E500	GATE	Integrity failure
+15) Golden Tests Appendix
+Test	Purpose	Expected Outcome
+T1	Short mate (no evals)	JSON null evals + structural commentary
+T2	Annotated [%eval]	±M notation + 3 Critical Moments
+T3	Names with commas	Properly quoted CSV
+T4	Long game	Auto-compact + Checksums
+16) Final Output Order
 
----
+```
+===STEP1-JSON-START=== → ===STEP1-JSON-END===
+===CSV-START=== → ===CSV-END===
+===COMMENTARY-START=== → ===COMMENTARY-END===
+===UX-START=== → ===UX-END===
+```
 
-## ✅ Completion Condition
-If JSON, CSV, Commentary, and UX all emit successfully → output **“Done.”**  
-Else print specific failure reason and await correction.
-
----
-
-*End of Quickstart Orchestrator Prompt v1.3.3*
+No prose, no “Code” tokens, no backticks between phases.
+Determinism is mandatory — the same PGN must yield identical output.
