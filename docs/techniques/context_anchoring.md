@@ -34,7 +34,8 @@ This enables the creation of **prompt-native systems** that exhibit deterministi
 ---
 
 ## 🧩 Execution Flow Diagram
-```
+```mermaid
+flowchart TD
     A[Prompt Input] --> B[Gate 1: Define Task]
     B --> C[Anchor: Store Validated Output]
     C --> D[Gate 2: Continue Reasoning Using Anchor]
@@ -43,7 +44,7 @@ This enables the creation of **prompt-native systems** that exhibit deterministi
     F -- Yes --> G[Next Gate / Final Output]
     F -- No --> C
     G --> H[Anchored State Persisted for Next Cycle]
-```
+
 ### Diagram Interpretation
 1. **Prompt Input** — initializes computation.  
 2. **Gate 1** — defines the reasoning function.  
