@@ -32,7 +32,6 @@ Each **Self-Audit** step is an assertion ensuring integrity before execution con
 This enables the creation of **prompt-native systems** that exhibit deterministic, testable, and stateful behavior — without API calls or fine-tuning.
 
 ---
-
 ## 🧩 Execution Flow Diagram
 
 ```mermaid
@@ -45,6 +44,7 @@ flowchart TD
     F -->|Yes| G["Next Gate or Final Output"]
     F -->|No|  C
     G --> H["Anchored State Persisted for Next Cycle"]
+
 
 ### Diagram Interpretation
 1. **Prompt Input** — initializes computation.  
