@@ -44,36 +44,28 @@ This enables the creation of **prompt-native systems** that exhibit deterministi
     F -- No --> C
     G --> H[Anchored State Persisted for Next Cycle]
 ```
-Diagram Interpretation
+### Diagram Interpretation
+1. **Prompt Input** — initializes computation.  
+2. **Gate 1** — defines the reasoning function.  
+3. **Anchor** — stores the validated context (*semantic memory*).  
+4. **Gate 2** — continues computation with the anchor as input.  
+5. **Self-Audit** — performs logical and structural validation.  
+6. **Stable?** — conditional checkpoint; if drift occurs, loop back.  
+7. **Next Gate** — proceeds only once stability is achieved.  
+8. **Anchored State** — becomes the seed for the next cycle or iteration.
 
-Prompt Input — initializes computation.
-
-Gate 1 — defines the reasoning function.
-
-Anchor — stores the validated context (semantic memory).
-
-Gate 2 — continues computation with the anchor as input.
-
-Self-Audit — performs logical and structural validation.
-
-Stable? — conditional checkpoint; if drift occurs, loop back.
-
-Next Gate — proceeds only once stability is achieved.
-
-Anchored State — becomes the seed for the next cycle or iteration.
-
-🧮 Theoretical Parallels
+🧮 ###Theoretical Parallels
 Computing Concept	Anchoring Analogue	Purpose
 Finite-State Machine	Anchor states and transitions	Defines deterministic reasoning flow.
 Control Loop	Re-anchor / validate cycle	Maintains stability under iterative prompting.
 Entropy Reduction	Reused context	Narrows prediction space for consistency.
 Reinforcement Feedback	Validated examples	Reinforces correct output behavior.
 
-🧱 Why It Matters
-
+🧱 ###Why It Matters
 Context Anchoring shows that language models can compute, validate, and persist logic within structured prompts.
 This bridges the gap between generative AI and classical programming, unlocking a new paradigm for prompt-native application design — where control flow, state, and verification all exist within language itself.
 
+---
 Author: Justin Rodriguez
 Framework: Context Anchoring v1.1 — Public Domain
 Repository: Florida IT Online — Prompt-Labs
