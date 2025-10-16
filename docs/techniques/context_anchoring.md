@@ -2,6 +2,8 @@
 *Version 1.1 — Public Domain Release*  
 [![License: Public Domain](https://img.shields.io/badge/license-Public%20Domain-brightgreen.svg)](./LICENSE)
 
+“This work introduces Context Anchoring, a novel prompt-based computation framework in which validated model outputs act as semantic anchors to stabilize multi-step reasoning. Unlike prior prompt chaining or fine-tuned memory systems, Context Anchoring achieves stateful, testable computation purely within context, using iterative gates and audit cycles.”
+
 ---
 
 ## 🚀 Context Anchoring as a Computing Model
