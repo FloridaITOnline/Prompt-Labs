@@ -34,6 +34,7 @@ This enables the creation of **prompt-native systems** that exhibit deterministi
 ---
 
 ## 🧩 Execution Flow Diagram
+
 ```mermaid
 flowchart TD
     A[Prompt Input] --> B[Gate 1: Define Task]
@@ -44,6 +45,7 @@ flowchart TD
     F -- Yes --> G[Next Gate / Final Output]
     F -- No --> C
     G --> H[Anchored State Persisted for Next Cycle]
+
 
 ### Diagram Interpretation
 1. **Prompt Input** — initializes computation.  
