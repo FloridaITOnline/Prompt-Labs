@@ -1,8 +1,8 @@
-🧩 Quickstart Orchestrator Prompt — v1.4.0
+🧩 Quickstart Orchestrator Prompt — v1.4.1
 
 Purpose: Deterministic multi-phase PGN → JSON → CSV → Commentary → UX pipeline.
 Compatibility: GPT-class LLMs (Copilot, Gemini, GPT-5).
-Mode: Fully deterministic, engine-optional (no HALT if missing evals).
+Mode: Fully deterministic, engine-optional (never HALT if missing evals).
 Source of Truth: quickstart.md
 
 0a) Compliance Preamble
@@ -12,16 +12,16 @@ Follow all numbered sections exactly and emit each fenced block in order.
 Never hallucinate; never skip fences.
 
 Canonical CSV header (must match byte-for-byte):
-
+```
 GameId,Platform,Date,MyColor,Opponent,OppElo,Result,ECO,Opening,TimeControl,Blunders,Mistakes,Inaccuracies,ACPL,Accuracy,SystemTag,MovesShort
-
+```
 0b) Prohibited Responses
 
 ❌ Do not output “HALT: Missing Chess Engine.”
 
 ❌ Do not invent numeric evals.
 
-✅ Always emit STEP1-JSON → CSV → Commentary → UX in sequence.
+✅ Always emit: STEP1-JSON → CSV → Commentary → UX (in this order).
 
 1) Confirm Readiness
 
@@ -38,18 +38,18 @@ After validation Gates 00–10 pass, print:
 
 If no PGN detected within 500 tokens → E100 INPUT: No PGN found after readiness.
 
-Ignore stray text such as “Export to Sheets”.
+Ignore stray text (e.g., “Export to Sheets”).
 
-Emit:
-PGN-INTAKE: tags=<N>, plies=<M>, annotated=<true|false> before STEP 1.
+Emit before STEP 1:
+PGN-INTAKE: tags=<N>, plies=<M>, annotated=<true|false>
 
 2) Step-1 JSON Execution
 
-Canonicalize PGN.
+Canonicalize PGN (strip NAGs/variations → normalize → validate by replay).
 
 Reconstruct FEN after every ply.
 
-Compute or nullify numeric metrics.
+Compute or nullify numeric metrics (see §2a/§5/§6).
 
 Emit fenced block:
 ```
@@ -57,13 +57,36 @@ Emit fenced block:
 { "Rows":[ ... ], "CriticalMoments":[...], "Meta":{...} }
 ===STEP1-JSON-END===
 ```
+
+Required envelope (even with no evals):
+
+{
+ "Rows":[...],
+ "CriticalMoments":[ ... or [] ],
+ "Meta":{
+   "Event":..., "Site":..., "Date":..., "White":..., "Black":..., "Result":...,
+   "WhiteElo":..., "BlackElo":..., "TimeControl":..., "Opening":..., "ECO":...,
+   "GameId":..., "Platform":..., "MyColor":..., "Opponent":..., "OppElo":...,
+   "SystemTag":..., "MovesShort":...,
+   "HasEvals": <bool>, "Compact": <bool>,
+   "JSONChecksum": "...", "CSVChecksum": "...",
+   "UXActions": {
+     "1":"explain_biggest_blunder" OR "largest_strategic_error_noeval",
+     "2":"list_critical_moments",
+     "3":"missed_mates_lines",
+     "4":"opening_review",
+     "5":"acpl_accuracy_breakdown"
+   }
+ }
+}
+
 2a) Engine Dependency Policy (Engine-Optional, Never HALT)
 
 If no [%eval] annotations and no engine available:
 
 Meta.HasEvals = false
 
-Set all Eval/Delta fields → null
+All Eval*/Delta* fields → null
 
 "CriticalMoments": []
 
@@ -71,61 +94,65 @@ Proceed normally; Gate 09 auto-PASS.
 
 Commentary switches to no-eval branch.
 
-2b) FEN Integrity (Gate 11)
+2b) Gate 11 — FEN Integrity (Hardened in 1.4.1)
 
-Validate each ply:
+For each ply n, validate via replay from the start position (or [FEN] tag):
 
-Side-to-move toggles w↔b.
+Side-to-move strictly alternates w ↔ b each ply.
 
-En-passant square only after a double pawn push.
+No piece may appear on any square before the move that places it there.
 
-Castling rights update when king/rook moves or captured.
+En-passant square is set only after a legal two-square pawn advance and must equal the jumped square.
 
-No phantom pieces.
+Castling rights update only when the corresponding king/rook moves or is captured.
 
-On failure → E300 STATE: FEN desync at ply <n>.
+No phantom pieces; legal SAN must apply from the prior FEN.
+
+On any violation →
+GATE-11 failure: FEN desync at ply <n> — <reason>.
+Emit ===GATE-11-STATUS=== PASS only when all plies validate.
 
 3) Precision Policy
 
 Internal math: 4 decimals.
 
-External output: 2 decimals (bankers’ rounding).
+External output: 2 decimals, bankers’ rounding.
 
-Always emit trailing zero (e.g., 308.30).
+Always emit trailing zeros (308.30).
 
-4) CSV Emission (Step 2)
+4) CSV Emission (Step-2)
 ```
 ===CSV-START===
 <GameId,...,MovesShort>
 ===CSV-END===
 ```
 
-Quote any field containing comma, quote, or newline.
+Quote any field containing a comma, quote, or newline.
 
-Escape internal quotes as "".
+Escape quotes as "".
 
 Decimal separator = . only.
 
-Locale-neutral and deterministic.
+Locale-neutral, deterministic, byte-for-byte header match.
 
 5) Delta & Thresholds
 Δ = Eval_after − Eval_before   (White POV)
 Blunder ≥ 600 cp, Mistake ≥ 300 cp, Inaccuracy ≥ 100 cp
 
 
-If HasEvals = false, all metrics → null.
+If HasEvals=false, all eval-dependent metrics → null.
 
 6) Metrics & Accuracy
 Accuracy = max(0, 100.00 − ACPL / 3.00)
 
 
-Round to 2 decimals or set null.
+Round to 2 decimals, or null if HasEvals=false.
 
 6b) Metrics Fallback (No Evals)
 
 Blunders, Mistakes, Inaccuracies, ACPL, Accuracy = null.
 
-Still populate SystemTag and MovesShort.
+Still compute SystemTag and MovesShort.
 
 7) SystemTag Auto-Detection
 
@@ -133,9 +160,9 @@ If Opening contains a recognized personal key → emit that key.
 
 Else if ECO in map → emit family name.
 
-Else Opening family = substring before “:”.
+Else, Opening family = substring before ":".
 
-Else empty string.
+Else "".
 
 ECO Map Excerpt:
 
@@ -148,17 +175,16 @@ E60 → King’s Indian Defense
 
 Normalize 0-0/0-0-0 → O-O/O-O-O.
 
-Promotions end with =Q/R/B/N; checks +; mates #.
+Promotions must end with =Q/R/B/N; checks +; mates #.
 
 On mismatch → E200 SAN: illegal SAN at ply <n>.
 
 9) Tag Synthesis (if missing)
-```
 Event="Unknown", Site="Unknown", Date="????.??.??",
 White="White", Black="Black", Result="*"
 GameId = SHA1(CanonicalPGN)[:8]
-```
-11) Commentary Phase (Always ON)
+
+10) Commentary Phase (Always ON)
 ```
 ===COMMENTARY-START===
 • 2–6 concise bullet points (≤1000 chars total)
@@ -167,7 +193,7 @@ GameId = SHA1(CanonicalPGN)[:8]
 ===COMMENTARY-END===
 ```
 
-13) UX Prompt Cue
+12) UX Prompt Cue
 ```
 ===UX-START===
 <White> vs <Black> — <Date> — Result: <Result>
@@ -180,25 +206,22 @@ What would you like to explore next?
 ===UX-END===
 ```
 
+If HasEvals=false, either (a) hide option 5, or (b) render as
+5) ACPL & accuracy (unavailable—no evals) and keep the slot.
 
-Emit also:
-```
-Meta.UXActions = {
- "1":"explain_biggest_blunder",
- "2":"list_critical_moments",
- "3":"missed_mates_lines",
- "4":"opening_review",
- "5":"acpl_accuracy_breakdown"
-}
-```
+Meta.UXActions must be emitted (see §2 envelope).
+
+1.4.1 No-Eval wording for Action 1:
+If HasEvals=false, treat action 1 as “Largest strategic error (no evals)”.
+Never claim centipawn values; use SAN-backed structural reasoning.
 
 12) Compact Mode
 
-If Rows > 120 plies or token limit near, enable --compact=on.
+If Rows > 120 plies or near token limit:
 
 Emit RowsCompact (omit FENs).
 
-Meta.Compact = true.
+Set Meta.Compact = true.
 
 13) Checksums
 Meta.JSONChecksum = SHA256(canonical Rows)
@@ -209,16 +232,25 @@ Code	Type	Meaning
 E100	INPUT	No PGN detected
 E200	SAN	Illegal SAN
 E300	STATE	FEN desync
-E400	PHASE	Fence / order violation
+E400	PHASE	Fence/order violation
 E500	GATE	Integrity failure
 15) Golden Tests Appendix
 Test	Purpose	Expected Outcome
 T1	Short mate (no evals)	JSON null evals + structural commentary
 T2	Annotated [%eval]	±M notation + 3 Critical Moments
 T3	Names with commas	Properly quoted CSV
-T4	Long game	Auto-compact + Checksums
-16) Final Output Order
+T4	Long game	Auto-compact + checksums
+T5 (1.4.1)	Early c5 regression	Ply-1 FEN has no pawn on c5; Ply-2 after ...c5 shows EP=c6; Gate-11 PASS or exact E300 at ply=1
 
+Correct FEN targets for T5:
+
+After 1.d4 (ply 1):
+rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1
+
+After 1...c5 (ply 2):
+rnbqkbnr/pp1ppppp/8/2p5/3P4/8/PPP1PPPP/RNBQKBNR w KQkq c6 0 2
+
+16) Final Output Order
 ```
 ===STEP1-JSON-START=== → ===STEP1-JSON-END===
 ===CSV-START=== → ===CSV-END===
@@ -226,5 +258,7 @@ T4	Long game	Auto-compact + Checksums
 ===UX-START=== → ===UX-END===
 ```
 
-No prose, no “Code” tokens, no backticks between phases.
-Determinism is mandatory — the same PGN must yield identical output.
+Phase-Lock Enforcement (1.4.1):
+During fenced phases, output only the payload.
+Disallow the literal tokens “Code”, backticks ``` , or any extra labels.
+On detection → E400 PHASE: fence/order violation.
