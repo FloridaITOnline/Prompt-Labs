@@ -68,6 +68,7 @@ Finite-State Machine	Anchor states and transitions	Defines deterministic reasoni
 Control Loop	Re-anchor / validate cycle	Maintains stability under iterative prompting.
 Entropy Reduction	Reused context	Narrows prediction space for consistency.
 Reinforcement Feedback	Validated examples	Reinforces correct output behavior.
+
 🧱 Why It Matters
 
 Context Anchoring shows that language models can compute, validate, and persist logic within structured prompts.
