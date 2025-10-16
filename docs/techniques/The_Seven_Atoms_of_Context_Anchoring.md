@@ -1,3 +1,6 @@
+Version 1.1
+[![License: Public Domain](https://img.shields.io/badge/license-Public%20Domain-brightgreen.svg)](./LICENSE)
+
 # 🧬 The Seven Atoms of Context Anchoring
 
 ## Overview
