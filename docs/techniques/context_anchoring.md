@@ -35,19 +35,16 @@ This enables the creation of **prompt-native systems** that exhibit deterministi
 
 ## 🧩 Execution Flow Diagram
 
-## 🧩 Execution Flow Diagram
-
 ```mermaid
 flowchart TD
-    A[Prompt Input] --> B[Gate 1 - Define Task]
-    B --> C[Anchor - Store Validated Output]
-    C --> D[Gate 2 - Continue Reasoning Using Anchor]
-    D --> E[Self-Audit - Validate and Score Output]
-    E --> F{Stable?}
-    F -- Yes --> G[Next Gate or Final Output]
-    F -- No --> C
-    G --> H[Anchored State Persisted for Next Cycle]
-
+    A["Prompt Input"] --> B["Gate 1 – Define Task"]
+    B --> C["Anchor – Store Validated Output"]
+    C --> D["Gate 2 – Continue Reasoning Using Anchor"]
+    D --> E["Self-Audit – Validate and Score Output"]
+    E --> F{"Stable ?"}
+    F -->|Yes| G["Next Gate or Final Output"]
+    F -->|No|  C
+    G --> H["Anchored State Persisted for Next Cycle"]
 
 ### Diagram Interpretation
 1. **Prompt Input** — initializes computation.  
