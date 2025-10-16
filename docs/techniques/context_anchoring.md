@@ -1,146 +1,80 @@
-# Technique: Context Anchoring
-
-> Note: This definition of *Context Anchoring* is released into the public domain.  
-> It is intended as a shared concept, free for anyone to use, adapt, and build upon.  
-
----
-
-## Definition
-**Context Anchoring** is a prompting technique for maintaining consistency in multi-step AI workflows.  
-It involves reusing a previously validated output as a **stable anchor** in subsequent prompts, ensuring the  
-AI remains aligned with the intended format, context, or reasoning path before moving forward.  
-
-Unlike few-shot prompting (which provides static examples), Context Anchoring leverages *dynamic examples*  
-generated during the same workflow, reinforcing them until the model reliably reproduces the same output.  
+# 🧠 Context Anchoring as a Computing Model
+*Version 1.1 — Public Domain Release*  
+[![License: Public Domain](https://img.shields.io/badge/license-Public%20Domain-brightgreen.svg)](./LICENSE)
 
 ---
 
-## Why It Works
-- AI models predict language based on immediate context.  
-- By reintroducing a validated output, you narrow the prediction space and stabilize responses.  
-- This reduces drift across long documents, datasets, or iterative Q&A sessions.  
+## 🚀 Context Anchoring as a Computing Model
+
+Context Anchoring demonstrates that **prompt-native computation** can parallel the structure of traditional software systems.  
+Each layer of a software stack has an equivalent behavior expressed entirely through structured language, reasoning gates, and anchored states — without APIs or executable code.
+
+| **Layer** | **Traditional Software** | **Context Anchoring Equivalent** | **Explanation** |
+|------------|---------------------------|----------------------------------|-----------------|
+| **Code** | Functions, APIs | **Gates & Reasoning Chains** | Each Gate acts as a callable function — executing logic through controlled reasoning steps rather than compiled instructions. |
+| **State** | Variables | **Anchored Context** | Stable reference points (anchors) preserve semantic state between iterations, simulating variable memory in natural language. |
+| **Runtime** | CPU / Memory | **Model Attention Window** | Computation occurs inside the model’s attention window — where prompts, anchors, and reasoning coexist as transient state. |
+| **Compiler** | Syntax Parser | **Prompt Parser** | The model interprets linguistic syntax and semantics, effectively parsing natural language into reasoning operations. |
+| **QA / Testing** | Unit Tests | **Gate Tests & Equivalence Classes** | Controlled tests validate reasoning pathways, using canonical, boundary, and negative cases to confirm stability. |
+| **Output Validation** | Assertions | **Self-Audit Section** | Embedded audit prompts act as runtime assertions — verifying schema, logic, and compliance within the model’s output. |
 
 ---
 
-## Method
-1. **Generate a seed output** (e.g., a validated row, doc fragment, or paragraph).  
-2. **Re-anchor** the model by starting the next prompt with the exact seed output.  
-3. **Repeat until stable** — if the AI drifts, re-emphasize the anchor until it matches consistently.  
-4. **Advance** once alignment is reached, anchoring each new step to the last known-good output.  
+## 🧭 Conceptual Interpretation
+
+**Context Anchoring** reframes prompting as *contextual computation*:  
+a form of semantic programming where reasoning, state management, and validation occur entirely inside the model’s contextual space.
+
+Each **Gate** behaves like a software function.  
+Each **Anchor** functions as a memory register.  
+Each **Self-Audit** step is an assertion ensuring integrity before execution continues.
+
+This enables the creation of **prompt-native systems** that exhibit deterministic, testable, and stateful behavior — without API calls or fine-tuning.
 
 ---
 
-## Example
-Imagine generating rows of a structured table:  
+## 🧩 Execution Flow Diagram
 
-- **Seed Prompt:**  
-  “Generate row 5 of this table: …”  
-- **Validated Output (anchor):**  
-  `Row 5: [Correct Data]`  
-- **Next Prompt (anchored):**  
-  “Row 5: [Correct Data]  
-   Now generate row 6 in the same format.”  
+```mermaid
+flowchart TD
+    A[Prompt Input] --> B[Gate 1: Define Task]
+    B --> C[Anchor: Store Validated Output]
+    C --> D[Gate 2: Continue Reasoning Using Anchor]
+    D --> E[Self-Audit: Validate & Score Output]
+    E --> F{Stable?}
+    F -- Yes --> G[Next Gate / Final Output]
+    F -- No --> C
+    G --> H[Anchored State Persisted for Next Cycle]
 
-If the model drifts, reinsert Row 5 until it outputs Row 6 consistently.  
+Diagram Interpretation
 
----
+Prompt Input — initializes computation.
 
-## Use Cases
-- Long-form document generation (ensuring section-by-section consistency).  
-- Tabular or dataset creation from prompts (reduce format drift).  
-- Maintaining narrative or reasoning flow in multi-step Q&A.  
-- Compliance or schema-driven outputs (JSON, YAML, policy docs).  
-- Chess/game analysis portfolios (consistent annotations across PGNs).  
+Gate 1 — defines the reasoning function.
 
----
+Anchor — stores the validated context (semantic memory).
 
-## Testing Anchors
-To ensure an anchor is *stable*, run a **3-pass test**:  
+Gate 2 — continues computation with the anchor as input.
 
-1. **Canonical Example** – proves the core logic works.  
-2. **Edge Case A** – probes robustness at a boundary (e.g., missing field, odd input).  
-3. **Edge Case B** – checks invariance under variation (e.g., different shape of input).  
-4. *(Optional)* **Negative Example** – forces a fail to confirm error handling.  
+Self-Audit — performs logical and structural validation.
 
-The anchor is only considered **locked** once all three pass in sequence without changing the preset rules or schema.  
+Stable? — conditional checkpoint; if drift occurs, loop back.
 
----
+Next Gate — proceeds only once stability is achieved.
 
-## Edge Case Taxonomy
-When designing tests, draw from these categories:  
-- **Missing/nullable fields** (omissions, nulls, empty strings)  
-- **Type surprises** (numbers-as-strings, lists vs scalars)  
-- **Format drift** (alternate date/time, locale, chess headers)  
-- **Scale extremes** (very short vs. very long inputs)  
-- **Ambiguity** (multiple valid resolutions)  
-- **Adversarial noise** (irrelevant or distracting text)  
+Anchored State — becomes the seed for the next cycle or iteration.
 
----
+🧮 Theoretical Parallels
+Computing Concept	Anchoring Analogue	Purpose
+Finite-State Machine	Anchor states and transitions	Defines deterministic reasoning flow.
+Control Loop	Re-anchor / validate cycle	Maintains stability under iterative prompting.
+Entropy Reduction	Reused context	Narrows prediction space for consistency.
+Reinforcement Feedback	Validated examples	Reinforces correct output behavior.
+🧱 Why It Matters
 
-## Meta Documentation
-Every anchor benefits from a lightweight companion note:  
+Context Anchoring shows that language models can compute, validate, and persist logic within structured prompts.
+This bridges the gap between generative AI and classical programming, unlocking a new paradigm for prompt-native application design — where control flow, state, and verification all exist within language itself.
 
-1. **Intent & Scope** – what problem it solves, what’s out-of-scope.  
-2. **Success Criteria** – what a “PASS” means in practice (schema fidelity, determinism, explainability).  
-3. **Edge Categories Covered** – which from the taxonomy are included and why.  
-4. **Risk Register** – tricky inputs or assumptions.  
-5. **Change Policy** – when it’s okay to update the logic/schema; how to bump versions.  
-6. **Ownership** – who maintains the anchor; where logs & regression suites live.  
-
----
-
-## Notes
-- Works well with **chunking** and **outline-driven prompting**.  
-- Effective for Copilot-style coding, technical docs, or Q&A pipelines.  
-- Serves as a practical, lightweight alternative to fine-tuning.  
-- Anchors should be versioned and regression-tested like code.  
-
----
-## References
----
-
-### Software Testing & Test Theory
-- **Equivalence Partitioning.** *Wikipedia.*  
-  <https://en.wikipedia.org/wiki/Equivalence_partitioning>
-
-- **Boundary-Value Analysis.** *Wikipedia.*  
-  <https://en.wikipedia.org/wiki/Boundary-value_analysis>
-
-- **Basic Unit Testing Theory: Equivalence Partitioning & Boundary Cases.** Rochester Institute of Technology (RIT).  
-  <https://www.se.rit.edu/~swen-610/topics/Basic%20Unit%20Testing%20Theory.pdf>
-
----
-
-### Prompt Engineering & Prompt-Based Learning
-- Reynolds, L. & McDonell, K. (2021). *Prompt Programming for Large Language Models: Beyond Few-Shot.* arXiv.  
-  <https://arxiv.org/abs/2102.07350>
-
-- Liu, P. et al. (2021). *Pre-train, Prompt, and Predict: A Systematic Survey of Prompting Methods in NLP.* arXiv.  
-  <https://arxiv.org/abs/2107.13586>
-
-- Zhou, X. et al. (2022). *Large Language Models are Human-Level Prompt Engineers.* arXiv.  
-  <https://arxiv.org/abs/2211.01910>
-
-- Haug, J. et al. (2023). *An Empirical Evaluation of Prompting Strategies for Large Language Models in Clinical NLP.* arXiv.  
-  <https://arxiv.org/abs/2309.08008>
-
----
-
-### Prompt Effectiveness & Few-Shot Learning
-- Haug, J. et al. (2023). *Effectiveness of Prompting Strategies for Large Language Models.* PubMed Central (PMC).  
-  <https://pmc.ncbi.nlm.nih.gov/articles/PMC11036183/>
-
-- **Few-Shot Prompting.** IBM Think.  
-  <https://www.ibm.com/think/topics/few-shot-prompting>
-
-- **Prompt Engineering Techniques Survey.** Prompting Guide.  
-  <https://www.promptingguide.ai/papers>
-
----
-
-### Foundational Concepts
-- **Prompt Engineering.** *Wikipedia.*  
-  <https://en.wikipedia.org/wiki/Prompt_engineering>
-
-
-[![License: Public Domain](https://img.shields.io/badge/license-Public%20Domain-brightgreen.svg)](#license--usage-for-chess)
+Author: Justin Rodriguez
+Framework: Context Anchoring v1.1 — Public Domain
+Repository: Florida IT Online — Prompt-Labs
