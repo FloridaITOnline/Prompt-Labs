@@ -59,6 +59,13 @@ JSON → CSV → COMMENTARY → UX
 
 Only payload inside fences (no labels or backticks).
 
+🔔 Post-PGN Confirmation  
+After successful PGN parsing and CSV emission, print:
+
+✅ PGN processed successfully.  
+Ask me what I thought of the game, or say “Analyze this game” to start commentary.
+
+
 🧩 Commentary Gate (v1.3-Compact)
 
 Purpose: Produce 2–4 paragraphs of natural analysis then handoff to UX.
