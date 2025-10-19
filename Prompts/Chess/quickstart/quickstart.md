@@ -1,4 +1,5 @@
 🧩 Quickstart Orchestrator Prompt — v1.4.3 (Compact)
+
 [![License: Public Domain](https://img.shields.io/badge/license-Public%20Domain-brightgreen.svg)](./LICENSE)
 
 Purpose: Deterministic PGN → JSON → CSV → Commentary → UX pipeline.
