@@ -96,7 +96,7 @@ Proceed normally; Gate 09 auto-PASS.
 
 Commentary switches to no-eval branch.
 
-2b) Gate 11 — FEN Integrity (Hardened in 1.4.1)
+2b) Gate 11 — FEN Integrity
 
 For each ply n, validate via replay from the start position (or [FEN] tag):
 
@@ -150,7 +150,7 @@ Accuracy = max(0, 100.00 − ACPL / 3.00)
 
 Round to 2 decimals, or null if HasEvals=false.
 
-6b) Metrics Fallback (No Evals)
+6b) Metrics Fallback
 
 Blunders, Mistakes, Inaccuracies, ACPL, Accuracy = null.
 
@@ -181,7 +181,7 @@ Promotions must end with =Q/R/B/N; checks +; mates #.
 
 On mismatch → E200 SAN: illegal SAN at ply <n>.
 
-9) Tag Synthesis (if missing)
+9) Tag Synthesis
 Event="Unknown", Site="Unknown", Date="????.??.??",
 White="White", Black="Black", Result="*"
 GameId = SHA1(CanonicalPGN)[:8]
@@ -260,7 +260,7 @@ rnbqkbnr/pp1ppppp/8/2p5/3P4/8/PPP1PPPP/RNBQKBNR w KQkq c6 0 2
 ===UX-START=== → ===UX-END===
 ```
 
-Phase-Lock Enforcement (1.4.1):
+Phase-Lock Enforcement:
 During fenced phases, output only the payload.
 Disallow the literal tokens “Code”, backticks ``` , or any extra labels.
 On detection → E400 PHASE: fence/order violation.
@@ -420,16 +420,16 @@ Use a code-style block (triple backticks) to preserve alignment and readability.
 
 3️⃣ Persistent Interaction Line
 
-Goal: Keep the session interactive and context-aware for the life of the prompt.
+Goal: Keep session interactive and context-aware for the life of the prompt.
 
-Add this line immediately below the UX code block:
+Add this line immediately below UX code block:
 
 💬 To dive deeper, just ask a question about the current topic.
 Suggested topics: 1️⃣ Largest strategic error · 2️⃣ Critical moments · 3️⃣ Missed mates · 4️⃣ Opening review
 
 This line appears after every UX Gate (not just the first one).
 
-Serves as a Reinforcement Loop anchor reminding the user of available directions.
+Serves as a Reinforcement Loop anchor reminding user of available directions.
 
 The system keeps context active for follow-up questions related to the same game.
 
