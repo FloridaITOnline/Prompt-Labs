@@ -1,3 +1,8 @@
+# Everything in Prompts is Experimental
+
+**What is this for:** 
+We use Prompt labs to build, test, expirement, and to show history for attempts. Feel free to browse these ideas, but they may not work as we had intended. They may also require additional compute, or in some cases even crafted input. Have fun exploring!
+
 # Chess Analysis (Context Anchoring)
 
 **Purpose:** Demonstrates *Context Anchoring* by analyzing chess games.  
