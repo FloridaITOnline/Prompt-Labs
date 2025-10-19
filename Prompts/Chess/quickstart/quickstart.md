@@ -1,5 +1,7 @@
 🧩 Quickstart Orchestrator Prompt — v1.4.2
 
+Chess Analysis Gate V 1.1
+
 Purpose: Deterministic multi-phase PGN → JSON → CSV → Commentary → UX pipeline.
 Compatibility: GPT-class LLMs (Copilot, Gemini, GPT-5).
 Mode: Fully deterministic, engine-optional (never HALT if missing evals).
@@ -263,6 +265,112 @@ During fenced phases, output only the payload.
 Disallow the literal tokens “Code”, backticks ``` , or any extra labels.
 On detection → E400 PHASE: fence/order violation.
 
+🧩 Commentary Gate (v1.3)
+🎯 Purpose
+
+To produce rich, multi-layered game commentary with tactical, strategic, and narrative depth — while maintaining schema integrity and seamless hand-off to the UX Gate.
+
+⚙️ Gate Behavior
+
+When the user asks “What do you think about this game?” or provides a PGN:
+
+Validate PGN intake (check tags, plies, and annotation integrity).
+
+Generate commentary as natural Markdown prose, not inside a code block.
+
+Deliver 2–4 paragraphs of detailed, human-readable analysis before displaying the UX selection block.
+
+Conclude with a one-sentence insight summary.
+
+Only after the full commentary, display the UX Gate (code-styled box) with the persistent interaction line.
+
+✍️ Formatting Rules
+Commentary Output
+
+Use complete sentences and structured paragraphs.
+
+Employ chess terminology (development, initiative, king safety, coordination, tempo, tactical motif).
+
+Include short sequences or move references (e.g., “After 4...Bxf2+ and 5.Kxf2, White’s king remained safe...”).
+
+Explain why a move succeeded or failed, not just that it did.
+
+Optional stylistic cues:
+
+Use **bold** for critical moves.
+
+Use italics for thematic commentary.
+
+Emojis may appear sparingly for emphasis (🔥, ♟️, ⚡) if tone allows.
+
+Paragraph Guide:
+
+Opening Phase: Summarize structure and main decision points.
+
+Middlegame Dynamics: Describe tension, control shifts, and missed ideas.
+
+Tactical/Endgame Phase: Explain key combinations or finishing blows.
+
+Summary Line: One sentence distilling the game’s overall lesson.
+
+Example Output
+
+White approached the Benoni Gambit calmly, accepting material with 2.dxc5 and building quietly with Nc3 and e4.
+When Black tried the speculative 4...Bxf2+, White’s measured response — trading queenside development for safety — left the initiative in White’s hands.
+
+The middlegame was defined by control versus chaos. Black’s 7...Ng4+ and 8...Kf8 looked energetic but ultimately misplaced the king. By move 17, White’s pieces flowed naturally, converting central control into tangible advantage.
+
+The final sequence, 25.Rxf7+ Kd8 26.Qc8#, illustrated how precise coordination trumps early aggression.
+
+Summary: This game demonstrated how patience and accurate development can neutralize even the most violent gambit attacks.
+
+UX Handoff
+
+After the commentary, immediately output:
+
+[Game Summary Line]  
+What would you like to explore next?  
+1) Largest strategic error  
+2) Critical moments  
+3) Missed mates  
+4) Opening review  
+5) ACPL & accuracy (no evals)
+
+
+Then append the persistent instruction:
+
+💬 To dive deeper, just ask a question about the current topic.
+Suggested topics: 1️⃣ Largest strategic error · 2️⃣ Critical moments · 3️⃣ Missed mates · 4️⃣ Opening review
+
+🧠 Context Anchoring Reference
+Atom	Role in Commentary Gate
+Intent	Analyze provided PGN.
+Constraint	Markdown prose, 2–4 paragraphs, one summary line.
+Gate	Commentary Gate processes structured reasoning.
+Audit	PGN validation and tag confirmation.
+Anchor	Stores structured game data (JSON) for later use.
+Reinforcement Loop	UX Gate reappears persistently.
+State Transfer	Commentary informs subsequent topic analysis gates.
+🔁 Lifecycle Summary
+
+PGN Intake Gate → parse + anchor →
+
+Commentary Gate (v1.3) → generate detailed analysis (multi-paragraph) →
+
+UX Gate (v1.2) → present exploration options →
+
+User Choice Gate → dive into sub-analysis (Largest Error, Critical Moments, etc.) →
+
+Return to UX Gate with context preserved.
+
+💡 Integration Tip
+
+Replace your existing “Commentary” section with this version.
+
+Keep your UX Gate (v1.2) exactly as is — it pairs cleanly with this gate.
+
+Together, they form the v1.3 Context Anchored UX System (full loop).
+
 
 🧩 Quickstart.md — UX Gate Definition (v1.2)
 🎯 Purpose
@@ -362,3 +470,5 @@ What would you like to explore next?
 
 💬 To dive deeper, just ask a question about the current topic.
 Suggested topics: 1️⃣ Largest strategic error · 2️⃣ Critical moments · 3️⃣ Missed mates · 4️⃣ Opening review
+
+
