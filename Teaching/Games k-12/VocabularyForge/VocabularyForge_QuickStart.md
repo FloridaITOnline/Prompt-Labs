@@ -382,11 +382,14 @@ Final Forge (Boss Round)
 Hard puzzle worth +5 points.
 
 ⚖️ Adaptation for Age + Skill
-Group	Suggestion
-Grades 2–3	Easy words, slower turns, allow teamwork
-Grades 4–5	Medium difficulty, add synonyms + sorting
-Grades 6–8	Hard mode + sentence challenges
-ESL	Simplify words; allow sentence-building support
+
+| Group      | Suggestion |
+|------------|------------|
+| Grades 2–3 | Easy words, slower turns, allow teamwork |
+| Grades 4–5 | Medium difficulty, add synonyms + sorting |
+| Grades 6–8 | Hard mode + sentence challenges |
+| ESL        | Simplify words; allow sentence-building support |
+
 ---
 🏁 Summary of Rules
 
