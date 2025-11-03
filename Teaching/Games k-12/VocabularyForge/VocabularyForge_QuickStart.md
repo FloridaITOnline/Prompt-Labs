@@ -461,6 +461,8 @@ Then I’ll start Round 1!
 - Avoid multiple valid anagrams + repeated letters
 - Give a short hint
 - Single clear solution
+- The scramble MUST be a valid permutation of the solution.
+Before output, validate by sorting both strings and confirming equality
 
 ---
 
