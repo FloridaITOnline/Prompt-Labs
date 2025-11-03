@@ -452,3 +452,47 @@ Example:
 > 4th grade, space, medium, default order, normal safety, team scoring
 
 Once confirmed, I’ll launch your first puzzle!
+
+--- 
+
+**Game Tuning Contracts**
+
+When generating Category Sort:
+- Choose 3 in-category words + 1 near-miss sharing 1 feature but breaking the defining rule.
+- Ensure exactly one correct odd-one-out.
+- Keep words grade-appropriate and familiar.
+- Provide a one-sentence rationale the teacher can reveal after guesses.
+
+### 🌀 Word Scramble — Tuning Contract
+
+When generating Word Scramble puzzles:
+
+- Use **grade-appropriate** vocabulary
+- Length:
+  - Easy: 3–5 letters
+  - Medium: 5–7 letters
+  - Hard: 7–9 letters
+- Scramble letters so the answer is not obvious
+  (don’t leave most of the word in correct order)
+- Avoid words with multiple valid anagrams
+- Minimize repeated letters
+- Provide a short, helpful hint
+- The solution must be **unambiguous**
+
+### 🔗 Synonym Chain — Tuning Contract
+
+When generating Synonym Chain puzzles:
+
+- Ensure the chain reflects a **clear progression** in meaning or intensity
+  (e.g., small → ____ → big)
+- The missing middle word must be **grade-appropriate** and familiar
+- There must be **exactly one correct answer**
+- The first and last words should be strongly related
+- The domain (A2) should guide word choices
+- Avoid ambiguous bridges with many valid answers
+- The puzzle should encourage students to see **shades of meaning**
+
+Optional:
+- Provide a short hint (e.g., “increasing temperature”)
+
+
