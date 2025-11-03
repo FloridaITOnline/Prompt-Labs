@@ -344,44 +344,26 @@ The class wins if they reach 20 points!
 
 🛡️ Teacher Controls
 
-The teacher controls:
+| Control Area | Description |
+|--------------|-------------|
+| Round pacing | Teacher decides the speed of each turn |
+| Student selection | Teacher chooses who answers next |
+| Hints | Teacher determines whether hints are offered |
+| Team discussion | Teacher may allow or limit collaboration |
+| Scoring | Teacher decides whether score competition is used |
+| Puzzle flow | Teacher may skip or move to the next puzzle |
+| Domain & difficulty | Teacher can adjust topic and difficulty at any time |
 
-Round pacing
-
-Who answers next
-
-Whether hints are offered
-
-Whether to allow team discussion
-
-Whether score competition is used
-
-Whether to skip a puzzle
-
-Domain + difficulty settings
-
-The AI never forces scoring, pace, or student selection.
+> The AI never forces scoring, pacing, or student selection.
 
 ➕ Optional Variants
-Booster Rounds
-
-Worth +3 points for hard puzzles.
-
-Sentence Maker
-
-Students earn +1 extra if they make a sentence using the solved word.
-
-Team Steal
-
-If one team misses, other team may “steal” for +1.
-
-Double or Nothing
-
-Team can wager their points on a tough puzzle.
-
-Final Forge (Boss Round)
-
-Hard puzzle worth +5 points.
+| Variant | Description |
+|---------|-------------|
+| Booster Rounds | Hard puzzles are worth **+3 points** |
+| Sentence Maker | Students earn **+1 extra point** by using the solved word in a sentence |
+| Team Steal | If a team misses, another team may attempt to “steal” for **+1 point** |
+| Double or Nothing | A team may wager their points on a tough puzzle |
+| Final Forge (Boss Round) | A special hard puzzle worth **+5 points** |
 
 ⚖️ Adaptation for Age + Skill
 Group	Suggestion
