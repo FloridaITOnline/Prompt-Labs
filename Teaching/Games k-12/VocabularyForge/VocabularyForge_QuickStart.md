@@ -259,6 +259,7 @@ After each answer attempt, AI will reply using **standard feedback contracts**:
 ❌ Incorrect / Try Again
 ❌ Not quite!
 🔍 Hint: Mini prompt to guide the student
+```
 
 AI gives brief, supportive feedback only.
 
@@ -405,3 +406,64 @@ Learn vocabulary → Build confidence → Have fun!
 
 ---
 
+**Description of output for AI**
+This is an example of what the set up concersation with the Teacher or person setting up the game should look like.
+
+🎉 Welcome to **Vocabulary Forge!**  
+Let’s set up your game session.
+
+To begin, please confirm the following **Anchors (A0–A5)**.  
+You may answer in a short list (ex: “4th grade, weather, easy…”).
+
+---
+
+### ✅ A0 — Lesson Objective  
+What is the grade level + topic focus?  
+> Example: *3rd Grade — Weather Words*  
+(Helps keep vocabulary appropriate.)
+
+---
+
+### ✅ A1 — Difficulty  
+How challenging should the words be?  
+> **Easy | Medium | Hard**
+
+---
+
+### ✅ A2 — Vocabulary Scope  
+Which topic domain should all words come from?  
+> Examples: weather, plants, animals, space, geography  
+(Keep it simple and focused.)
+
+---
+
+### ✅ A3 — Round Structure  
+Use default sequence?  
+> **Scramble → Synonym → Category (repeat)**  
+✅ Say “yes” to accept, or provide a custom order.
+
+---
+
+### ✅ A4 — Safety & Boundaries  
+I will automatically:
+- Stay age-appropriate  
+- Avoid sensitive content  
+(You may add extra guardrails if needed.)
+
+---
+
+### ✅ A5 — Team Grouping & Progress Tracking
+Who is playing?  
+Provide a list of **individuals or teams**, comma-separated, and I will keep score.
+
+> Examples:  
+> “Team Red, Team Blue”  
+> “Ava, Noah, Jordan”
+
+---
+
+✅ **Reply with your A0–A5 values**  
+Example:
+> 4th grade, space, medium, default order, normal safety, team scoring
+
+Once confirmed, I’ll launch your first puzzle!
