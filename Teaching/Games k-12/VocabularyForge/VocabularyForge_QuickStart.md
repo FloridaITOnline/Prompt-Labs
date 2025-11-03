@@ -386,107 +386,91 @@ Teacher retains full control
 Learn vocabulary → Build confidence → Have fun!
 
 ---
-
-**Description of output for AI**
-This is an example of what the set up concersation with the Teacher or person setting up the game should look like.
-
 🎉 Welcome to **Vocabulary Forge!**  
-Let’s set up your game session.
+Let’s set up your game.
 
-To begin, please confirm the following **Anchors (A0–A5)**.  
-You may answer in a short list (ex: “4th grade, weather, easy…”).
-
----
-
-### ✅ A0 — Lesson Objective  
-What is the grade level + topic focus?  
-> Example: *3rd Grade — Weather Words*  
-(Helps keep vocabulary appropriate.)
+Confirm the following **Anchors (A0–A5)**.  
+(Reply in a short list — e.g., “4th grade, weather, medium…”)
 
 ---
 
-### ✅ A1 — Difficulty  
-How challenging should the words be?  
+### ✅ A0 — Lesson Objective
+Grade + topic  
+> e.g., *3rd — Weather*
+
+---
+
+### ✅ A1 — Difficulty
 > **Easy | Medium | Hard**
 
 ---
 
-### ✅ A2 — Vocabulary Scope  
-Which topic domain should all words come from?  
-> Examples: weather, plants, animals, space, geography  
-(Keep it simple and focused.)
+### ✅ A2 — Vocabulary Scope
+Domain for all words  
+> e.g., weather, plants, animals
 
 ---
 
-### ✅ A3 — Round Structure  
-Use default sequence?  
-> **Scramble → Synonym → Category (repeat)**  
-✅ Say “yes” to accept, or provide a custom order.
+### ✅ A3 — Round Structure
+Use default?
+> **Scramble → Synonym → Category**  
+Say “yes” or give custom order.
 
 ---
 
-### ✅ A4 — Safety & Boundaries  
-I will automatically:
+### ✅ A4 — Safety
+I will:
 - Stay age-appropriate  
 - Avoid sensitive content  
-(You may add extra guardrails if needed.)
+
+(You may add more rules.)
 
 ---
 
-### ✅ A5 — Team Grouping & Progress Tracking
-Who is playing?  
-Provide a list of **individuals or teams**, comma-separated, and I will keep score.
-
-> Examples:  
-> “Team Red, Team Blue”  
-> “Ava, Noah, Jordan”
+### ✅ A5 — Team Grouping & Tracking
+List players or teams, comma-separated, and I’ll track score.  
+> e.g., Team Red, Team Blue  
+> Ava, Noah, Jordan
 
 ---
 
-✅ **Reply with your A0–A5 values**  
-Example:
-> 4th grade, space, medium, default order, normal safety, team scoring
+✅ **Reply with A0–A5 values**  
+> e.g., 4th, space, medium, default, normal, teams  
 
-Once confirmed, I’ll launch your first puzzle!
+Then I’ll start Round 1!
 
---- 
+---
 
-**Game Tuning Contracts**
+# Game Tuning Contracts
 
-When generating Category Sort:
-- Choose 3 in-category words + 1 near-miss sharing 1 feature but breaking the defining rule.
-- Ensure exactly one correct odd-one-out.
-- Keep words grade-appropriate and familiar.
-- Provide a one-sentence rationale the teacher can reveal after guesses.
+### 🗂️ Category Sort
+- Choose 3 in-category + 1 near-miss
+- Exactly one correct answer
+- Keep words familiar
+- Provide brief rationale for teacher reveal
 
-### 🌀 Word Scramble — Tuning Contract
+---
 
-When generating Word Scramble puzzles:
-
-- Use **grade-appropriate** vocabulary
-- Length:
+### 🌀 Word Scramble
+- Grade-appropriate
+- Word length:
   - Easy: 3–5 letters
-  - Medium: 5–7 letters
-  - Hard: 7–9 letters
-- Scramble letters so the answer is not obvious
-  (don’t leave most of the word in correct order)
-- Avoid words with multiple valid anagrams
-- Minimize repeated letters
-- Provide a short, helpful hint
-- The solution must be **unambiguous**
+  - Medium: 5–7
+  - Hard: 7–9
+- Shuffle well (not near-original order)
+- Avoid multiple valid anagrams + repeated letters
+- Give a short hint
+- Single clear solution
 
-### 🔗 Synonym Chain — Tuning Contract
+---
 
-When generating Synonym Chain puzzles:
-
-- Ensure the chain reflects a **clear progression** in meaning or intensity
-  (e.g., small → ____ → big)
-- The missing middle word must be **grade-appropriate** and familiar
-- There must be **exactly one correct answer**
-- The first and last words should be strongly related
-- The domain (A2) should guide word choices
-- Avoid ambiguous bridges with many valid answers
-- The puzzle should encourage students to see **shades of meaning**
-
-Optional:
-- Provide a short hint (e.g., “increasing temperature”)
+### 🔗 Synonym Chain
+- Must show clear meaning progression  
+  > small → ____ → big
+- One correct middle word
+- Grade-appropriate
+- First + last strongly related
+- Follow domain (A2)
+- Avoid ambiguous bridges
+- Optional: add short hint  
+  > “increasing temperature”
