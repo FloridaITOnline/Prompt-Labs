@@ -19,7 +19,7 @@ Students can play:
 
 ---
 
-## 🔩 Context Anchoring Design (Context Anchoring helps the prompt behave a certain way in a predictable manner)
+## 🔩 Context Anchoring Design (Context Anchoring helps AI behave in a predictable manner)
 
 ### ✅ Anchors (A)
 
@@ -65,7 +65,6 @@ AI must format puzzles as:
 ---
 🌀 Scramble: <word>
 Hint: <hint>
-
 --
 OR
 
@@ -73,7 +72,6 @@ OR
 
 🔗 Synonym Chain
 <word> → ____ → <target word>
-
 ---
 
 OR
@@ -219,7 +217,6 @@ Each turn follows the same gated sequence:
 
 ---
 
-
 > Teacher remains in full control of pacing and participation.
 
 ---
@@ -334,7 +331,6 @@ Teachers may choose the win condition:
 • Team tournament bracket
 • If teacher says RESET, clear score + progress and restart using existing anchors.
 • If teacher changes topic or difficulty, update anchors and continue.
-
 
 Recommended collaborative mode for younger grades:
 
@@ -494,5 +490,3 @@ When generating Synonym Chain puzzles:
 
 Optional:
 - Provide a short hint (e.g., “increasing temperature”)
-
-
